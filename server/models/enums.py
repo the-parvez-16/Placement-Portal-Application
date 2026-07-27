@@ -1,0 +1,24 @@
+from enum import Enum
+
+class UserRole(Enum):
+    SUDO = "special_power : sudo"
+    ADMIN = "admin"
+    COMPANY = "company"
+    STUDENT = "student"
+
+class UserStatus(Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    BLOCKED = "blocked"
+
+class DriveStatus(Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    CLOSED = "closed"
+
+class ApplicationStatus(Enum):
+    APPLIED = "applied"
+    SHORTLISTED = "shortlisted"
+    INTERVIEW = "interview"
+    SELECTED = "selected"
+    REJECTED = "rejected"
