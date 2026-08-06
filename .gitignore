@@ -8,3 +8,5 @@ instance/
 .vscode/
 .venv/
 venv/
+.agents/
+project-*.md
