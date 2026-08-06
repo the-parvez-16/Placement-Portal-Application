@@ -3,6 +3,10 @@ from .config import config
 from .extensions import db, jwt
 from .security import hash_password
 from server.models import *
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Admin:
     name = "cb16"
@@ -11,7 +15,7 @@ class Admin:
     password = "cb16"
     status = UserStatus.APPROVED
 
-def create_app(config_name="development"):
+def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     db.init_app(app)
@@ -19,7 +23,7 @@ def create_app(config_name="development"):
 
     with app.app_context():
         db.create_all()
-        admin_user = User.query.filter_by(email="cb16@admin.com").first()
+        admin_user = User.query.filter_by(email=Admin.email).first()
 
         if not admin_user:
             hashed_password = hash_password(Admin.password)
