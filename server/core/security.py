@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 def hash_password(password: str) -> str:
     return generate_password_hash(password=password)
 
-def verify_password(password: str, hashed_password: str) -> bool:
+def verify_password(hashed_password: str, password: str) -> bool:
     return check_password_hash(pwhash=hashed_password,password=password)
 
 def generate_token(user):

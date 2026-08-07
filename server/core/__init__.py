@@ -5,6 +5,8 @@ from .security import hash_password
 from server.models import *
 import os
 from dotenv import load_dotenv
+from server.exceptions import register_error_handlers
+from server.controllers import auth
 
 load_dotenv()
 
@@ -20,7 +22,8 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     app.config.from_object(config[config_name])
     db.init_app(app)
     jwt.init_app(app)
-
+    register_error_handlers(app)
+    
     with app.app_context():
         db.create_all()
         admin_user = User.query.filter_by(email=Admin.email).first()
@@ -36,4 +39,7 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
             db.session.add(new_admin)
             db.session.commit()
             print("Default Admin account created successfully!")
+
+    app.register_blueprint(auth)
+    
     return app
