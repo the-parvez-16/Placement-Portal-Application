@@ -1,6 +1,6 @@
 from flask import jsonify
 from marshmallow import ValidationError
-from server.exceptions import ResourceAlreadyExistsError, InvalidCredentialsError
+from server.exceptions import ResourceAlreadyExistsError, InvalidCredentialsError, IncompleteProfileError
 
 def register_error_handlers(app):
 
