@@ -19,6 +19,10 @@ def register_error_handlers(app):
         return jsonify({"error": str(err)}), 409
 
 
+    @app.errorhandler(IncompleteProfileError)
+    def handle_incomplete_error(err):
+        return jsonify({"error": str(err)}), 400
+
     @app.errorhandler(Exception)
     def handle_generic_error(err):
         return jsonify({"error": str(err)}), 500

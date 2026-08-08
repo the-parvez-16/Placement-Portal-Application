@@ -7,7 +7,7 @@ from server.models import *
 import os
 from dotenv import load_dotenv
 from server.exceptions import register_error_handlers
-from server.controllers import auth
+from server.controllers import auth, admin
 
 load_dotenv()
 
@@ -44,5 +44,6 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
             print("Default Admin account created successfully!")
 
     app.register_blueprint(auth)
+    app.register_blueprint(admin)
     
     return app
