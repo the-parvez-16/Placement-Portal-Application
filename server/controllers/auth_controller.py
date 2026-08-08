@@ -1,7 +1,7 @@
-from server.services import register_user_service, login_user_service
+from server.services import register_user_service, login_user_service, refresh_user_service
 from flask import Blueprint, request, jsonify
 from server.dto import RegistrationDTO, LoginDTO
-from marshmallow import ValidationError
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -23,3 +23,13 @@ def login():
     response = login_user_service(validated_data)
 
     return jsonify(response), 201
+
+@auth.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    user_id = get_jwt_identity()
+
+    response = refresh_user_service(user_id)
+
+    return jsonify(response), 201
+    

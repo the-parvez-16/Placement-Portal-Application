@@ -1,0 +1,114 @@
+:root {
+    /* Base Colors */
+    --bg-color: lightgrey;
+    --text-main: #323232;
+    --text-muted: #666;
+    --card-bg: #fff;
+    
+    /* Brand Colors */
+    --primary: #2d8cf0;
+    --primary-light: rgba(45, 140, 240, 0.12);
+    
+    --success: #198754;
+    --success-light: rgba(25, 135, 84, .12);
+    
+    --danger: #dc3545;
+    --danger-light: rgba(220, 53, 69, 0.12);
+
+    /* Alert Box Colors (The new ones you just added!) */
+    --alert-danger-text: #b91c1c;
+    --alert-danger-bg: #fef2f2;
+    --alert-danger-border: #f87171;
+    
+    --alert-success-text: #047857;
+    --alert-success-bg: #ecfdf5;
+    --alert-success-border: #34d399;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+.portal-card {
+    background: var(--card-bg);
+    border: 2px solid var(--text-main);
+    border-radius: 5px;
+    box-shadow: 4px 4px 0 var(--text-main);
+}
+
+.portal-search-input {
+    height: 36px;
+    border: 2px solid var(--text-main);
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+    box-shadow: 3px 3px 0 var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 10px;
+    outline: none;
+}
+
+.portal-search-input:focus {
+    border-color: var(--primary);
+}
+
+.portal-btn {
+    border: 2px solid currentColor;
+    border-radius: 5px;
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 3px 13px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1.6;
+}
+
+.portal-btn:active {
+    transform: translate(3px, 3px);
+}
+
+.portal-btn:hover {
+    opacity: .85;
+}
+
+.portal-btn-primary {
+    color: var(--primary);
+    background-color: var(--primary-light);
+    box-shadow: 3px 3px 0 var(--primary);
+}
+
+.portal-btn-danger {
+    color: var(--danger);
+    background-color: var(--danger-light);
+    box-shadow: 3px 3px 0 var(--danger);
+}
+
+.portal-btn-success {
+    color: var(--success);
+    background-color: var(--success-light);
+    box-shadow: 3px 3px 0 var(--success);
+}
+
+.portal-btn-dark {
+    color: var(--text-main);
+    background-color: rgba(50, 50, 50, .08);
+    box-shadow: 3px 3px 0 var(--text-main);
+}
+
+.alert-box {
+    border: 1px solid currentColor;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.portal-list-row {
+    border-bottom: 1px dashed #666;
+}
+
+.portal-list-row:last-child {
+    border-bottom: none;
+}

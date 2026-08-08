@@ -1,5 +1,4 @@
-from marshmallow import validates_schema
-from marshmallow import Schema, fields, validate
+from marshmallow import validates_schema, Schema, fields, validate, ValidationError
 from server.models import UserRole
 
 class RegistrationDTO(Schema):
@@ -18,7 +17,7 @@ class RegistrationDTO(Schema):
         validate=[
             validate.Length(min=8, max=64, error="Password must be at least 8 characters long."),
             validate.Regexp(
-                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,64}$", 
+                r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,64}$", 
                 error="Please choose a stronger password (include uppercase, lowercase, a number, and a special character)."
             )
         ],
@@ -28,6 +27,7 @@ class RegistrationDTO(Schema):
     )
     role = fields.Enum(
         UserRole,
+        by_value=True,
         required=True,
         error_messages={
             "required": "Please select if you are registering as a Student or a Company.",

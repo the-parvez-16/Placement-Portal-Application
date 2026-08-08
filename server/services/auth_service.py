@@ -52,5 +52,12 @@ def login_user_service(data):
         "access_token": token_pair["access_token"],
         "refresh_token": token_pair["refresh_token"]
     }
-        
-    
+
+def refresh_user_service(user_id):
+    user = UserRepository.find_by_id(user_id)
+    token_pair = generate_token(user)
+
+    return {
+        "access_token": token_pair["access_token"],
+        "refresh_token": token_pair["refresh_token"]
+    }
