@@ -41,7 +41,7 @@ const handleBack = () => {
   <div class="">
     <header class="portal-card px-3 py-2 mb-4">
       
-      <!-- 1. LANDING PAGE (When Not Logged In) -->
+      <!-- LANDING PAGE -->
       <div v-if="!authState.isLoggedIn" class="d-flex justify-content-between align-items-center">
         <router-link class="d-inline-flex align-items-center navbar-brand fw-bold fs-5 mb-0" style="color: #323232; text-decoration: none;" to="/">
             <VsxIcon iconName="Home" type="linear" size="20" color="#333" class="me-1" />Placement Portal
@@ -52,15 +52,15 @@ const handleBack = () => {
         </div>
       </div>
 
-      <!-- 2. PROFILE / EDIT PROFILE (Simple Header with Back Button) -->
+      <!-- EDIT PROFILE -->
       <div v-else-if="navbarState.showBackBtn" class="d-flex align-items-center gap-2">
         <h3 class="fw-bold mb-0 fs-5">{{ navbarState.title }}</h3>
         <button @click="handleBack" class="ms-auto portal-btn portal-btn-dark text-decoration-none">
           {{ navbarState.backText || '← Back' }}
         </button>
       </div>
-
-      <!-- 3. DASHBOARDS (Admin, Company, Student - Desktop & Mobile splits) -->
+      
+      <!-- DASHBOARDS -->
       <div v-else>
         
         <!-- Desktop View -->
@@ -76,11 +76,11 @@ const handleBack = () => {
                 
                 <!-- Edit Profile Link -->
                 <router-link v-if="navbarState.showProfileBtn" :to="navbarState.profileRoute || '/profile'" class="portal-btn portal-btn-dark">
-                  <VsxIcon iconName="Profile" :size="32" color="#333" type="linear" />Edit Profile
+                  <VsxIcon iconName="Profile" :size="20" color="#333" type="linear" />Edit Profile
                 </router-link>
                 
                 <button @click="handleLogout" class="portal-btn portal-btn-danger">
-                    Logout →
+                    <VsxIcon iconName="LogoutCurve" :size="20" type="linear" /> Logout
                 </button>
             </div>
         </div>
@@ -90,9 +90,11 @@ const handleBack = () => {
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="fs-5 fw-bold mb-0">{{ navbarState.title }}</h1>
                 <div class="d-flex gap-2">
-                     <router-link v-if="navbarState.showProfileBtn" :to="navbarState.profileRoute || '/profile'" class="portal-btn portal-btn-dark">Edit Profile</router-link>
-                     <button @click="handleLogout" class="portal-btn portal-btn-danger">
-                        Logout →
+                    <router-link v-if="navbarState.showProfileBtn" :to="navbarState.profileRoute || '/profile'" class="portal-btn portal-btn-dark">
+                      <VsxIcon iconName="Profile" :size="20" color="#333" type="linear" />
+                    </router-link>
+                    <button @click="handleLogout" class="portal-btn portal-btn-danger">
+                        <VsxIcon iconName="LogoutCurve" :size="20" type="linear" />
                     </button>
                 </div>
             </div>

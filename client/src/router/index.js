@@ -3,7 +3,10 @@ import Login from '@/views/auth/Login.vue'
 import Home from "@/views/Home.vue";
 import Register from "@/views/auth/Register.vue";
 import Dashboard from "@/views/Dashboard.vue";
+import Profile from "@/views/Profile.vue";
 import NotFound from "@/views/error/NotFound.vue";
+import UserDetails from "@/views/UserDetails.vue";
+import { authState } from "@/store";
 
 const routes = [
     {
@@ -28,6 +31,18 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
+        path: "/profile",
+        name: "MyProfile",
+        component: Profile,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/user/:id",
+        name: "UserDetails",
+        component: UserDetails,
+        meta: { requiresAuth: true }
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound
@@ -44,8 +59,9 @@ router.beforeEach((to, from) => {
 
     if (to.meta.requiresAuth && !token) {
         return "login"
-    }
-    else {
+    }else if((to.path === '/' || to.path === '/login' || to.path === '/register') && authState.value.isLoggedIn){
+        return "dashboard"
+    }else {
         return true;
     }
 });

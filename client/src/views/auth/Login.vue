@@ -2,11 +2,10 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import api from "@/services/api";
-import { authState } from "@/store";
+import { authState, alertState } from "@/store";
 
 const email = ref("");
 const password = ref("");
-const errMsg = ref("");
 
 const router = useRouter();
 
@@ -36,11 +35,18 @@ const handleLogin = async () => {
         authState.value.isLoggedIn = true;
         authState.value.role = userRole;
 
+        alertState.value = {
+            type:"success",
+            message:"Logged in successfully!"
+        }
+
         router.push("/dashboard");
 
     } catch (err) {
-        console.log(err);
-        errMsg.value = err.response?.data?.error || "Error during login. Please try again.";
+        alertState.value = {
+            type:"danger",
+            message: err?.response?.data?.error || "Error during login. Please try again."
+        }
     }
 }
 </script>
@@ -50,10 +56,6 @@ const handleLogin = async () => {
       
       <form class="form" @submit.prevent="handleLogin">
           <div class="title">Welcome,<br><span>sign in to continue</span></div>
-          
-          <div v-if="errMsg" class="mx-auto alert-box text-danger bg-danger bg-opacity-25 w-100">
-              {{ errMsg }}
-          </div>
 
           <input type="email" v-model="email" placeholder="Email" class="input" autocomplete="email" required>
           <input type="password" v-model="password" placeholder="Password" class="input" autocomplete="current-password" required>

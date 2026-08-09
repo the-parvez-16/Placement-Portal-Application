@@ -2,9 +2,9 @@
 import { ref } from 'vue';
 import api from "@/services/api";
 import { useRouter } from "vue-router";
+import { alertState } from "@/store"
 
 const router = useRouter();
-const errMsg = ref("");
 
 const role = ref("");
 const name = ref("");
@@ -24,20 +24,19 @@ const handleRegister = async () => {
             role: role.value
         });
 
-        console.log(resp.data);
+        alertState.value = {
+            type:"success",
+            message:"Registration successful!"
+        }
+
         router.push("/login");
 
     } catch (err) {
-        console.log(err);
-        if (err.response?.data?.errors) {
-            const errorsObj = err.response.data.errors;
-            const firstErrorKey = Object.keys(errorsObj)[0]; 
-            const messageArray = errorsObj[firstErrorKey]; 
-
-            errMsg.value = Array.isArray(messageArray) ? messageArray[0] : messageArray;
-        } else {
-            errMsg.value = "Registration failed! Please try again.";
+        alertState.value = {
+            type:"danger",
+            message: err?.response?.data?.error || "Registration failed! Please try again."
         }
+
     }
 };
 </script>
@@ -46,10 +45,6 @@ const handleRegister = async () => {
   <div class="d-flex justify-content-center align-items-center flex-grow-1">
     <form class="form" @submit.prevent="handleRegister">
         <div class="title">Create Account<br><span>join as a student or company</span></div>
-
-        <div v-if="errMsg" class="alert-box text-danger bg-danger bg-opacity-25">
-          {{ errMsg }}
-        </div>
 
         <select v-model="role" class="input mb-3" style="cursor: pointer;" required>
           <option value="" hidden>Select Your Role</option>
