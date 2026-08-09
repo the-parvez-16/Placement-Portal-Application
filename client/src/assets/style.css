@@ -71,7 +71,8 @@ body {
 }
 
 .portal-btn:hover {
-    opacity: .85;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--text-main);
 }
 
 .portal-btn-primary {
@@ -94,8 +95,9 @@ body {
 
 .portal-btn-dark {
     color: var(--text-main);
-    background-color: rgba(50, 50, 50, .08);
-    box-shadow: 3px 3px 0 var(--text-main);
+    background-color: var(--card-bg);
+    box-shadow: 4px 4px 0 var(--text-main);
+    transition: all 0.2s ease;
 }
 
 .alert-box {

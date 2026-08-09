@@ -62,7 +62,7 @@ const handleRegister = async () => {
         <input type="password" v-model="password" placeholder="Password" class="input" autocomplete="new-password" required>
         <input type="password" v-model="confirm_password" placeholder="Confirm Password" class="input" autocomplete="new-password" required>
         
-        <button type="submit" class="button-confirm">Sign Up →</button>
+        <button type="submit" class="portal-btn portal-btn-dark">Sign Up →</button>
 
         <div class="text-center mt-2 w-100">
             <span class="text-muted small">Already have an account? </span>

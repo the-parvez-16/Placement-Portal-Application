@@ -58,7 +58,7 @@ const handleLogin = async () => {
           <input type="email" v-model="email" placeholder="Email" class="input" autocomplete="email" required>
           <input type="password" v-model="password" placeholder="Password" class="input" autocomplete="current-password" required>
           
-          <button type="submit" class="button-confirm">Sign In →</button>
+          <button type="submit" class="portal-btn portal-btn-dark">Sign In →</button>
 
           <div class="text-center mt-2 w-100">
               <span class="text-muted small">Don't have an account? </span>

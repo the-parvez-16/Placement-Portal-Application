@@ -8,6 +8,7 @@ class UserRole(Enum):
 
 class UserStatus(Enum):
     PENDING = "pending"
+    APPLIED = "applied"
     APPROVED = "approved"
     BLOCKED = "blocked"
 

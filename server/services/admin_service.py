@@ -8,19 +8,27 @@ def get_admin_dashboard_stats():
     total_drives = DriveRepository.count_all()
     total_applications = ApplicationRepository.count_all()
 
-    pending_companies = UserRepository.find_by_role_and_status(UserRole.COMPANY, UserStatus.PENDING)
+
+    response = {
+        "totalStudents": total_students,
+        "totalCompanies": total_companies,
+        "totalDrives": total_drives,
+        "totalApplications": total_applications
+    }
+
+    return response
+
+
+def get_admin_pending_approvals():
+    pending_company_users = UserRepository.find_by_role_and_status(UserRole.COMPANY, UserStatus.APPLIED)
     pending_drives = DriveRepository.find_by_status(DriveStatus.PENDING)
 
-    pending_companies = PendingCompanyDTO(many=True).dump(pending_companies)
+    pending_company_users = PendingCompanyDTO(many=True).dump(pending_company_users)
     pending_drives = PendingDriveDTO(many=True).dump(pending_drives)
 
     response = {
-        "total_students": total_students,
-        "total_companies": total_companies,
-        "total_drives": total_drives,
-        "total_applications": total_applications,
-        "pending_companies": pending_companies,
-        "pending_drives": pending_drives
+        "pendingCompanyUsers": pending_company_users,
+        "pendingDrives": pending_drives
     }
 
     return response

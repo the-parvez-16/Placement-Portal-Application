@@ -1,17 +1,20 @@
-class ResourceAlreadyExistsError(Exception):
+class ResourceAlreadyExistsException(Exception):
     pass
 
-class InvalidCredentialsError(Exception):
+class InvalidCredentialsException(Exception):
     pass
 
-class IncompleteProfileError(Exception):
+class IncompleteProfileException(Exception):
     pass
 
-class CompanyNotFoundError(Exception):
+class AccountBlockedException(Exception):
     pass
 
-class DriveNotFoundError(Exception):
+class CompanyNotFoundException(Exception):
     pass
 
-class ApplicationNotFoundError(Exception):
+class DriveNotFoundException(Exception):
+    pass
+
+class ApplicationNotFoundException(Exception):
     pass

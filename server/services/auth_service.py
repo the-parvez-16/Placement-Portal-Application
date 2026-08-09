@@ -1,7 +1,7 @@
 from server.repositories import BaseRepository, UserRepository, StudentRepository, CompanyRepository
 from server.core.security import hash_password, verify_password, generate_token
 from server.models import User, Student, Company, UserRole, UserStatus
-from server.exceptions import ResourceAlreadyExistsError, InvalidCredentialsError
+from server.exceptions import ResourceAlreadyExistsException, InvalidCredentialsException
 
 def register_user_service(data):
     name = data["name"]
@@ -11,7 +11,7 @@ def register_user_service(data):
 
     existing_user = UserRepository.find_by_email(email)
     if existing_user:
-        raise ResourceAlreadyExistsError("Email already registered")
+        raise ResourceAlreadyExistsException("Email already registered")
     
     hashed_password = hash_password(password)
     
@@ -33,7 +33,7 @@ def register_user_service(data):
     
     BaseRepository.commit()
     
-    return {"message": "Success!", "id": new_user.id}
+    return {"message": "Registration successful! Please log in.", "id": new_user.id}
 
 def login_user_service(data):
     email = data["email"]
@@ -42,11 +42,15 @@ def login_user_service(data):
     user = UserRepository.find_by_email(email)
     
     if not user or not verify_password(user.password, password):
-        raise InvalidCredentialsError("Invalid credentials!")
+        raise InvalidCredentialsException("Invalid credentials!")
+    
+    if user.status == UserStatus.BLOCKED:
+        raise InvalidCredentialsException("Your account has been blocked by the admin.")
+
 
     token_pair = generate_token(user)
     return {
-        "message": "Login success!",
+        "message": "Login successful!",
         "access_token": token_pair["access_token"],
         "refresh_token": token_pair["refresh_token"]
     }

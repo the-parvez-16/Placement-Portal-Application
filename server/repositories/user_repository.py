@@ -4,6 +4,11 @@ from server.repositories import BaseRepository
 
 class UserRepository(BaseRepository):
     @staticmethod
+    def find_by_id(id: int) -> User | None:
+        stmt = db.select(User).filter_by(id=id)
+        return db.session.scalar(stmt)
+
+    @staticmethod
     def find_by_email(email: str) -> User | None:
         stmt = db.select(User).filter_by(email=email)
         return db.session.scalar(stmt)

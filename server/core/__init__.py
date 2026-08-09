@@ -7,7 +7,7 @@ from server.models import *
 import os
 from dotenv import load_dotenv
 from server.exceptions import register_error_handlers
-from server.controllers import auth, admin
+from server.controllers import auth, admin, company, student
 
 load_dotenv()
 
@@ -45,5 +45,7 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
 
     app.register_blueprint(auth)
     app.register_blueprint(admin)
+    app.register_blueprint(company)
+    app.register_blueprint(student)
     
     return app
