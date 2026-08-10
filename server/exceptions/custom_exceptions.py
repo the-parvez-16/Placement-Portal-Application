@@ -12,3 +12,6 @@ class AccountBlockedException(Exception):
 
 class ResourceNotFoundException(Exception):
     pass
+
+class InvalidStatusTransitionException(Exception):
+    pass

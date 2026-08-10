@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from .config import config
-from .extensions import db, jwt
+from .extensions import db, jwt, celery_app, cache
 from .security import hash_password
 from server.models import *
 import os
@@ -27,6 +27,8 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     app.config.from_object(config[config_name])
     db.init_app(app)
     jwt.init_app(app)
+    celery_app.conf.update(app.config)
+    cache.init_app(app)
     register_error_handlers(app)
 
     if not os.path.exists('logs'):

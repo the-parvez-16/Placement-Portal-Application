@@ -23,3 +23,23 @@ class ApplicationRepository(BaseRepository):
                 PlacementDrive.job_title.ilike(f"%{search_query}%"))
             )
         return db.paginate(stmt, page=page, per_page=per_page)
+
+    @staticmethod
+    def find_by_student_and_drive(student_id: int, drive_id: int):
+        stmt = select(Application).filter_by(student_id=student_id, drive_id=drive_id)
+        return db.session.scalar(stmt)
+
+    @staticmethod
+    def find_by_drive_id(drive_id: int):
+        stmt = select(Application).filter_by(drive_id=drive_id)
+        return db.session.scalars(stmt).all()
+
+    @staticmethod
+    def find_by_student_id(student_id: int):
+        stmt = select(Application).filter_by(student_id=student_id)
+        return db.session.scalars(stmt).all()
+
+    @staticmethod
+    def find_by_id(id: int) -> Application | None:
+        stmt = select(Application).filter_by(id=id)
+        return db.session.scalar(stmt)

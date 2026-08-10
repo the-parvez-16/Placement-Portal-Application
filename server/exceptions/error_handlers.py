@@ -35,6 +35,11 @@ def register_error_handlers(app):
         return jsonify({"error": str(err)}), 409
 
 
+    @app.errorhandler(InvalidStatusTransitionException)
+    def handle_invalid_status_transition(err):
+        return jsonify({"error": str(err)}), 422
+
+
     @app.errorhandler(Exception)
     def handle_generic_exception(err):
         app.logger.error(f"Unhandled Server Error: {err}", exc_info=True)

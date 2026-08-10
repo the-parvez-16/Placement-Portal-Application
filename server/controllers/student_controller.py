@@ -1,8 +1,10 @@
+from server.services.application_service import apply_for_drive
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.student_service import *
+from server.services.drive_service import get_approved_drives
 from server.models import UserRole
-from server.dto import StudentProfileDTO
+from server.dto import StudentProfileDTO, ApplicationDTO, DriveListDTO
 import os
 from werkzeug.utils import secure_filename
 
@@ -59,4 +61,36 @@ def update_student_profile_api():
         "message": "Profile updated successfully!",
         "profile": response_data
     }), 200
+
+
+@student.route("/drives", methods=["GET"])
+@jwt_required()
+def get_available_drives_api():
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    query = request.args.get("q", "")
+    page = request.args.get("page", 1, type=int)
+    drives = get_approved_drives(page, query)
+    response_data = DriveListDTO(many=True).dump(drives)
+    
+    return jsonify(response_data), 200
+
+
+@student.route("/apply/<int:drive_id>", methods=["POST"])
+@jwt_required()
+def apply_drive_api(drive_id):
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    user_id = get_jwt_identity()
+    application = apply_for_drive(user_id, drive_id)
+    response_data = ApplicationDTO().dump(application)
+    
+    return jsonify({
+        "message": "Applied successfully!",
+        "application": response_data
+    }), 201
 
