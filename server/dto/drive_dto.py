@@ -33,3 +33,10 @@ class DriveListDTO(Schema):
     salary = fields.Integer(dump_only=True)
     application_deadline = fields.DateTime(dump_only=True)
     status = fields.Function(lambda obj: obj.status.value if obj.status else None, dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
+    applications = fields.Method("get_apps", dump_only=True)
+
+    def get_apps(self, obj):
+        if not obj.applications: return []
+        return [{"id": app.id, "student": {"name": app.student.name if app.student else "Unknown"}} for app in obj.applications]
+

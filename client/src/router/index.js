@@ -11,6 +11,8 @@ import CompaniesList from "@/views/admin/CompaniesList.vue";
 import StudentsList from "@/views/admin/StudentsList.vue";
 import DrivesList from "@/views/DrivesList.vue";
 import ApplicationsList from "@/views/ApplicationsList.vue";
+import DriveDetails from "@/components/details/DriveDetails.vue";
+import ReviewApplication from '@/views/ReviewApplication.vue';
 
 const routes = [
     {
@@ -46,12 +48,18 @@ const routes = [
         component: UserDetails,
         meta: { requiresAuth: true }
     },
-    // {
-    //     path: "/drive/:id",
-    //     name: "DriveDetails",
-    //     component: DriveDetails,
-    //     meta: { requiresAuth: true }
-    // },
+    {
+        path: "/drive/:id",
+        name: "DriveDetails",
+        component: DriveDetails,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/review/:id",
+        name: "ReviewApplication",
+        component: ReviewApplication,
+        meta: { requiresAuth: true }
+    },
     {
         path: "/admin/companies",
         name: "Companies",

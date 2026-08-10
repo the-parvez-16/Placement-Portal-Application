@@ -47,3 +47,16 @@ def update_application_status(application_id: int, new_status: str):
 
     return application
         
+
+def get_student_applications(user_id: int):
+    student = StudentRepository.get_by_user_id(user_id)
+    if not student:
+        raise ResourceNotFoundException("Student not found")
+    return ApplicationRepository.find_by_student_id(student.id)
+
+
+def get_application_by_id(application_id: int):
+    app = ApplicationRepository.find_by_id(application_id)
+    if not app:
+        raise ResourceNotFoundException("Application not found")
+    return app

@@ -1,18 +1,32 @@
 <script setup>
 import { ref } from 'vue';
+import api from "@/services/api";
+import { alertState } from '@/store';
 
 const driveData = ref({
     jobTitle: '',
-    eligibilityCriteria: '',
+    minCgpa: '',
+    allowedBranches: '',
     salary: '',
     applicationDeadline: '',
     jobDescription: ''
 });
 
-const submitDrive = () => {
-    console.log("Submitting Drive:", driveData.value);
-    // Yahan API call aayegi drive create karne ke liye
-    // Uske baad programmatic modal close aur toast message
+const submitDrive = async () => {
+    try {
+        const payload = {
+            job_title: driveData.value.jobTitle,
+            job_description: driveData.value.jobDescription,
+            min_cgpa: parseFloat(driveData.value.minCgpa) || null,
+            allowed_branches: driveData.value.allowedBranches || null,
+            salary: parseInt(driveData.value.salary) || null,
+            application_deadline: driveData.value.applicationDeadline || null
+        };
+        await api.post('/company/drives', payload);
+        alertState.value = { type: 'success', message: 'Drive created successfully! Refresh to see it.' };
+    } catch (err) {
+        alertState.value = { type: 'danger', message: 'Failed to create drive.' };
+    }
 };
 </script>
 
@@ -33,9 +47,14 @@ const submitDrive = () => {
                             <input v-model="driveData.jobTitle" type="text" class="form-control portal-search-input w-100" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Eligibility Criteria *</label>
-                            <input v-model="driveData.eligibilityCriteria" type="text" class="form-control portal-search-input w-100" placeholder="e.g. B.Tech CS, 7+ CGPA" required>
+                            <label class="form-label fw-bold">Minimum CGPA</label>
+                            <input v-model="driveData.minCgpa" type="number" step="0.1" class="form-control portal-search-input w-100" placeholder="e.g. 7.5">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Allowed Branches</label>
+                            <input v-model="driveData.allowedBranches" type="text" class="form-control portal-search-input w-100" placeholder="e.g. CSE, ECE, ME">
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Salary (Optional)</label>
                             <input v-model="driveData.salary" type="number" class="form-control portal-search-input w-100" placeholder="e.g. ₹500000">

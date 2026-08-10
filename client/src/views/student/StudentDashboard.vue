@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { navbarState } from '@/store';
+import { navbarState, alertState } from '@/store';
 import OrganizationsList from '@/components/student/OrganizationsList.vue';
 import AppliedDrives from '@/components/student/AppliedDrives.vue';
 import AvailableDrives from '@/components/student/AvailableDrives.vue';
+import api from "@/services/api"
 
 // Ye data backend API se fetch hoga
 const studentName = ref("Student"); 
@@ -11,16 +12,26 @@ const companiesList = ref([]);
 const studentApplications = ref([]);
 const approvedDrivesList = ref([]);
 
-onMounted(() => {
-    // Header Setup
+onMounted(async () => {
+    try {
+        const profileRes = await api.get("/student/profile")
+        const drivesRes = await api.get('/student/drives');
+        const applicationRes = await api.get('/student/applications');
+        studentName.value = profileRes.data.name;
+        approvedDrivesList.value = drivesRes.data;
+        studentApplications.value = applicationRes.data;
+    } catch(err) {
+        alertState.value = { type: "danger", message: "Failed to load drives" };
+    }
     navbarState.value = {
         title: `Welcome, ${studentName.value}`,
         showSearch: true,
         searchPlaceholder: 'Search role, company, skills…',
         showProfileBtn: true,
-        profileRoute: '/profile', // Dynamic routing ke hisaab se
+        profileRoute: '/profile',
         showBackBtn: false
     };
+
 });
 </script>
 

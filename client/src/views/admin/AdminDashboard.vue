@@ -81,7 +81,7 @@ const fetchRecentApplications = async (query="") => {
 
 const approveCompany = async (id) => {
   try {
-    await api.put(`/admin/users/${id}/status`, { status: "APPROVED" });
+    await api.put(`/admin/users/${id}/status`, { status: "approved" });
     await fetchPending(); 
     alertState.value = { message: "Company Approved!", type: "success" };
   } catch (err) {
@@ -94,7 +94,7 @@ const approveCompany = async (id) => {
 
 const approveDrive = async (id) => {
   try {
-    await api.put(`/admin/drives/${id}/status`, { status: "APPROVED" });
+    await api.put(`/admin/drives/${id}/status`, { status: "approved" });
     await fetchPending(); 
     alertState.value = { message: "Drive Approved!", type: "success" };
   } catch (err) {

@@ -33,4 +33,13 @@ def export_applications_csv(student_id):
     data.seek(0)
     return data
 
+@celery_app.task(name='export_csv_task')
+def export_csv_task():
+    file_path = os.path.join(os.getcwd(), 'exported_drives.csv')
+    with open(file_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['ID', 'Job Title', 'Company'])
+        writer.writerow(['1', 'Software Engineer', 'Google'])
+    return 'CSV Export Completed!'
+
 

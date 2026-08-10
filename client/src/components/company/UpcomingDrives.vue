@@ -31,7 +31,7 @@ defineProps({
                     <td>{{ drive.job_title }}</td>
                     <td>
                         <div class="d-flex gap-2 flex-wrap">
-                            <router-link :to="`/company/drive/${drive.id}`" class="portal-btn portal-btn-dark">View Details</router-link>
+                            <router-link :to="`/drive/${drive.id}`" class="portal-btn portal-btn-dark">View Details</router-link>
                             <!-- API integration ke waqt isko event emit mein badal denge -->
                             <button class="portal-btn portal-btn-success">Mark as Complete</button> 
                         </div>

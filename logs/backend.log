@@ -1,0 +1,77 @@
+2026-08-10 22:11:49,560 ERROR: Unhandled Server Error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. [in /mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/exceptions/error_handlers.py:45]
+Traceback (most recent call last):
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-08-10 22:46:28,074 ERROR: Unhandled Server Error: name 'DriveRepository' is not defined [in /mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/exceptions/error_handlers.py:45]
+Traceback (most recent call last):
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask_jwt_extended/view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/controllers/student_controller.py", line 115, in get_drive_api
+    drive = DriveRepository.find_by_id(drive_id)
+            ^^^^^^^^^^^^^^^
+NameError: name 'DriveRepository' is not defined. Did you mean: 'UserRepository'?
+2026-08-10 22:59:06,918 ERROR: Unhandled Server Error: name 'AdminDriveListDTO' is not defined [in /mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/exceptions/error_handlers.py:45]
+Traceback (most recent call last):
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask_jwt_extended/view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/controllers/admin_controller.py", line 124, in admin_get_drives
+    response = get_admin_drives(page, query)
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/services/admin_service.py", line 87, in get_admin_drives
+    dumped_items = AdminDriveListDTO(many=True).dump(paginated_result.items)
+                   ^^^^^^^^^^^^^^^^^
+NameError: name 'AdminDriveListDTO' is not defined. Did you mean: 'AdminStudentListDTO'?
+2026-08-10 22:59:13,465 ERROR: Unhandled Server Error: name 'AdminDriveListDTO' is not defined [in /mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/exceptions/error_handlers.py:45]
+Traceback (most recent call last):
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask_jwt_extended/view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/controllers/admin_controller.py", line 124, in admin_get_drives
+    response = get_admin_drives(page, query)
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/services/admin_service.py", line 87, in get_admin_drives
+    dumped_items = AdminDriveListDTO(many=True).dump(paginated_result.items)
+                   ^^^^^^^^^^^^^^^^^
+NameError: name 'AdminDriveListDTO' is not defined. Did you mean: 'AdminStudentListDTO'?
+2026-08-10 22:59:18,167 ERROR: Unhandled Server Error: name 'AdminApplicationListDTO' is not defined [in /mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/exceptions/error_handlers.py:45]
+Traceback (most recent call last):
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/venv/lib/python3.14/site-packages/flask_jwt_extended/view_decorators.py", line 170, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/controllers/admin_controller.py", line 139, in admin_get_applications
+    response = get_admin_applications(page, query)
+  File "/mnt/Demon/academics/IITM/MAD-2_project/Placement-Portal-Application/server/services/admin_service.py", line 98, in get_admin_applications
+    dumped_items = AdminApplicationListDTO(many=True).dump(paginated_result.items)
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'AdminApplicationListDTO' is not defined

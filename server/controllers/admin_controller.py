@@ -140,3 +140,11 @@ def admin_get_applications():
     
     return jsonify(response), 200
 
+
+from server.workers.tasks import export_csv_task
+
+@admin.route("/export-csv", methods=["POST"])
+@jwt_required()
+def export_csv_api():
+    task = export_csv_task.delay()
+    return jsonify({"message": "CSV Export started in the background!", "task_id": task.id}), 200

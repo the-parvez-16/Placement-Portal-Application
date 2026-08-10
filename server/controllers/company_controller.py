@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.company_service import update_company_profile, get_company_profile
 from server.services.drive_service import create_placement_drive, get_drives_by_company
-from server.services.application_service import get_drive_applications
+from server.services.application_service import *
 from server.models import UserRole
 from server.dto import CompanyProfileDTO, CreateDriveDTO, DriveListDTO, UpdateApplicationStatusDTO, ApplicationListDTO
 
@@ -97,7 +97,7 @@ def update_application_status_api(application_id):
         return jsonify({"message": "Unauthorized"}), 401
     
     data = UpdateApplicationStatusDTO().load(request.get_json())
-    updated_application = update_application_status(application_id, data)
+    updated_application = update_application_status(application_id, data.get("status"))
     response_data = UpdateApplicationStatusDTO().dump(updated_application)
     
     return jsonify({
@@ -105,3 +105,8 @@ def update_application_status_api(application_id):
         "application": response_data
     }), 200
     
+@company.route("/applications/<int:application_id>", methods=["GET"])
+@jwt_required()
+def get_single_application_api(application_id):
+    app = get_application_by_id(application_id)
+    return jsonify(ApplicationListDTO().dump(app)), 200

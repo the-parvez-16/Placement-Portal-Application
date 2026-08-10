@@ -1,10 +1,12 @@
+from server.repositories import DriveRepository
 from server.services.application_service import apply_for_drive
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.student_service import *
 from server.services.drive_service import get_approved_drives
+from server.services.application_service import get_student_applications
 from server.models import UserRole
-from server.dto import StudentProfileDTO, ApplicationDTO, DriveListDTO
+from server.dto import StudentProfileDTO, ApplicationDTO, DriveListDTO, ApplicationListDTO
 import os
 from werkzeug.utils import secure_filename
 
@@ -94,3 +96,25 @@ def apply_drive_api(drive_id):
         "application": response_data
     }), 201
 
+
+@student.route("/applications", methods=["GET"])
+@jwt_required()
+def get_my_applications_api():
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    user_id = get_jwt_identity()
+    applications = get_student_applications(user_id)
+    response_data = ApplicationListDTO(many=True).dump(applications)
+    
+    return jsonify(response_data), 200
+
+@student.route("/drive/<int:drive_id>", methods=["GET"])
+@jwt_required()
+def get_drive_api(drive_id):
+    drive = DriveRepository.find_by_id(drive_id)
+    if not drive:
+        return jsonify({"error": "Drive not found"}), 404
+
+    return jsonify(DriveListDTO().dump(drive)), 200

@@ -41,7 +41,7 @@ const formatDate = (dateString) => {
             <td>{{ formatDate(app.appliedAt) }}</td>
             <td>
               <router-link
-                :to="`/admin/application/${app.id}`"
+                :to="`/review/${app.id}`"
                 class="portal-btn portal-btn-primary py-1 px-2"
               >
                 View
