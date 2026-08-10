@@ -32,11 +32,18 @@ const handleRegister = async () => {
         router.push("/login");
 
     } catch (err) {
-        alertState.value = {
-            type:"danger",
-            message: err?.response?.data?.error || "Registration failed! Please try again."
+        let errorMsg = err.response?.data?.error || "Error during Registration. Please try again.";
+    
+        if (typeof errorMsg === 'object') {
+            const firstField = Object.keys(errorMsg)[0];
+            const specificError = errorMsg[firstField][0];
+            const capitalizedField = firstField.charAt(0).toUpperCase() + firstField.slice(1);
+            errorMsg = `${capitalizedField}: ${specificError}`;
         }
-
+        alertState.value = {
+            type: "danger",
+            message: errorMsg
+        };
     }
 };
 </script>

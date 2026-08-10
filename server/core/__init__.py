@@ -8,6 +8,8 @@ import os
 from dotenv import load_dotenv
 from server.exceptions import register_error_handlers
 from server.controllers import auth, admin, company, student
+import logging
+from logging.handlers import RotatingFileHandler
 
 load_dotenv()
 
@@ -26,6 +28,17 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     db.init_app(app)
     jwt.init_app(app)
     register_error_handlers(app)
+
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+        
+    file_handler = RotatingFileHandler('logs/backend.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+
     
     with app.app_context():
         db.create_all()

@@ -10,7 +10,6 @@ const password = ref("");
 const router = useRouter();
 
 const handleLogin = async () => {
-    console.log("Trying to login with:", email.value, password.value);
     try {
         const resp = await api.post("/auth/login", {
             email: email.value,
@@ -23,9 +22,7 @@ const handleLogin = async () => {
         localStorage.setItem("refresh_token", refresh_token);
 
         const base64Url = access_token.split('.')[1];
-        console.log( "base64url"+base64Url);
         const payload = JSON.parse(atob(base64Url));
-        console.log("payload"+payload.toString());
         let userRole = payload.role;
         if(userRole === "special_power : sudo"){
             userRole = "sudo";
@@ -43,10 +40,18 @@ const handleLogin = async () => {
         router.push("/dashboard");
 
     } catch (err) {
-        alertState.value = {
-            type:"danger",
-            message: err?.response?.data?.error || "Error during login. Please try again."
+        let errorMsg = err.response?.data?.error || "Error during login. Please try again.";
+    
+        if (typeof errorMsg === 'object') {
+            const firstField = Object.keys(errorMsg)[0];
+            const specificError = errorMsg[firstField][0];
+            const capitalizedField = firstField.charAt(0).toUpperCase() + firstField.slice(1);
+            errorMsg = `${capitalizedField}: ${specificError}`;
         }
+        alertState.value = {
+            type: "danger",
+            message: errorMsg
+        };
     }
 }
 </script>

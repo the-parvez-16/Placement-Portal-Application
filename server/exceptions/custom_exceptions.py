@@ -10,11 +10,5 @@ class IncompleteProfileException(Exception):
 class AccountBlockedException(Exception):
     pass
 
-class CompanyNotFoundException(Exception):
-    pass
-
-class DriveNotFoundException(Exception):
-    pass
-
-class ApplicationNotFoundException(Exception):
+class ResourceNotFoundException(Exception):
     pass

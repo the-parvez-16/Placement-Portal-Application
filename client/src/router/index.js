@@ -7,6 +7,10 @@ import Profile from "@/views/Profile.vue";
 import NotFound from "@/views/error/NotFound.vue";
 import UserDetails from "@/views/UserDetails.vue";
 import { authState } from "@/store";
+import CompaniesList from "@/views/admin/CompaniesList.vue";
+import StudentsList from "@/views/admin/StudentsList.vue";
+import DrivesList from "@/views/DrivesList.vue";
+import ApplicationsList from "@/views/ApplicationsList.vue";
 
 const routes = [
     {
@@ -42,6 +46,36 @@ const routes = [
         component: UserDetails,
         meta: { requiresAuth: true }
     },
+    // {
+    //     path: "/drive/:id",
+    //     name: "DriveDetails",
+    //     component: DriveDetails,
+    //     meta: { requiresAuth: true }
+    // },
+    {
+        path: "/admin/companies",
+        name: "Companies",
+        component: CompaniesList,
+        meta: { requiresAuth: true, roles: ['admin', 'sudo'] }
+    },
+    {
+        path: "/admin/students",
+        name: "Students",
+        component: StudentsList,
+        meta: { requiresAuth: true, roles: ['admin', 'sudo'] }
+    },
+    {
+        path: "/drives",
+        name: "Drives",
+        component: DrivesList,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/applications",
+        name: "Applications",
+        component: ApplicationsList,
+        meta: { requiresAuth: true }
+    },
     {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
@@ -59,6 +93,8 @@ router.beforeEach((to, from) => {
 
     if (to.meta.requiresAuth && !token) {
         return "login"
+    }else if(to.meta.roles && !to.meta.roles.includes(authState.value.role)){
+        return "dashboard"
     }else if((to.path === '/' || to.path === '/login' || to.path === '/register') && authState.value.isLoggedIn){
         return "dashboard"
     }else {

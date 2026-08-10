@@ -9,7 +9,6 @@ import { alertState, navbarState } from "@/store";
 
 const route = useRoute();
 
-const role = localStorage.getItem('role');
 const stats = ref({
   totalStudents: 0,
   totalCompanies: 0,
@@ -18,9 +17,11 @@ const stats = ref({
 });
 
 const pending = ref({
-  pendingCompanies: [],
+  pendingCompanyUsers: [],
   pendingDrives: []
 });
+
+const recentApplications = ref([]);
 
 onMounted(async () => {
   navbarState.value = { 
@@ -30,20 +31,31 @@ onMounted(async () => {
     'Search student / organization…',
     showBackBtn: false 
   };
-
-  await fetchDashboardData();
+  await fetchStats();
+  await fetchPending();
+  await fetchRecentApplications();
 });
 
 watch(() => route.query.q, async (newQuery) => {
   navbarState.value.searchQuery = newQuery || "";
-  await fetchDashboardData(newQuery);
+  await fetchPending(newQuery);
+  await fetchRecentApplications(newQuery);
 });
 
-const fetchDashboardData = async (query="") => {
-  try {
-    const statsResponse = await api.get(`/admin/dashboard/stats?q=${query}`);
+const fetchStats = async () => {
+  try{
+    const statsResponse = await api.get(`/admin/dashboard/stats`);
     stats.value = statsResponse.data;
+  }catch(err){
+    alertState.value = {
+      message: err.response?.data?.error || "Failed to load dashboard stats!",
+      type: "danger"
+    }
+  }
+}
 
+const fetchPending = async (query="") => {
+  try {
     const pendingResponse = await api.get(`/admin/dashboard/pending?q=${query}`);
     pending.value = pendingResponse.data;
 
@@ -53,7 +65,45 @@ const fetchDashboardData = async (query="") => {
       type: "danger"
     }
   }
-}
+};
+
+const fetchRecentApplications = async (query="") => {
+  try {
+    const response = await api.get(`/admin/dashboard/recent?q=${query}`);
+    recentApplications.value = response.data;
+  } catch (err) {
+    alertState.value = {
+      message: err.response?.data?.error || "Failed to load recent applications!",
+      type: "danger"
+    }
+  }
+};
+
+const approveCompany = async (id) => {
+  try {
+    await api.put(`/admin/users/${id}/status`, { status: "APPROVED" });
+    await fetchPending(); 
+    alertState.value = { message: "Company Approved!", type: "success" };
+  } catch (err) {
+    alertState.value = { 
+      message: err.response?.data?.error || "Failed to approve company", 
+      type: "danger" 
+    };
+  }
+};
+
+const approveDrive = async (id) => {
+  try {
+    await api.put(`/admin/drives/${id}/status`, { status: "APPROVED" });
+    await fetchPending(); 
+    alertState.value = { message: "Drive Approved!", type: "success" };
+  } catch (err) {
+    alertState.value = { 
+      message: err.response?.data?.error || "Failed to approve drive",
+      type: "danger"
+    };
+  }
+};
 </script>
 
 <template>
@@ -67,8 +117,8 @@ const fetchDashboardData = async (query="") => {
       <!-- Pending -->
       <div class="col-12 col-md-6">
         <PendingApprovals 
-          :pendingCompanies="pendingCompanyUsers" 
-          :pendingDrives="pendingDrives"
+          :pendingCompanyUsers="pending.pendingCompanyUsers" 
+          :pendingDrives="pending.pendingDrives"
           @approveCompany="approveCompany"
           @approveDrive="approveDrive"
         />
@@ -85,8 +135,8 @@ const fetchDashboardData = async (query="") => {
         <RecentApplications :applications="recentApplications" />
         
         <div class="d-flex gap-2 mt-3">
-            <router-link to="/admin/drives" class="portal-btn portal-btn-dark w-100 text-center">Manage All Drives</router-link>
-            <router-link to="/admin/applications" class="portal-btn portal-btn-dark w-100 text-center">View All Applications</router-link>
+            <router-link to="/drives" class="portal-btn portal-btn-dark w-100 text-center">Manage All Drives</router-link>
+            <router-link to="/applications" class="portal-btn portal-btn-dark w-100 text-center">View All Applications</router-link>
         </div>
       </div>
 

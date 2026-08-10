@@ -1,7 +1,8 @@
-from server.repositories import BaseRepository, UserRepository, StudentRepository, CompanyRepository
+from server.repositories import UserRepository, StudentRepository, CompanyRepository
 from server.core.security import hash_password, verify_password, generate_token
 from server.models import User, Student, Company, UserRole, UserStatus
-from server.exceptions import ResourceAlreadyExistsException, InvalidCredentialsException
+from server.exceptions import ResourceNotFoundException, ResourceAlreadyExistsException, InvalidCredentialsException, AccountBlockedException
+from server.dto import CompanyProfileDTO, StudentProfileDTO
 
 def register_user_service(data):
     name = data["name"]
@@ -31,7 +32,7 @@ def register_user_service(data):
         new_company = Company(user_id=new_user.id, name=name)
         CompanyRepository.save(new_company)
     
-    BaseRepository.commit()
+    UserRepository.commit()
     
     return {"message": "Registration successful! Please log in.", "id": new_user.id}
 
@@ -45,7 +46,7 @@ def login_user_service(data):
         raise InvalidCredentialsException("Invalid credentials!")
     
     if user.status == UserStatus.BLOCKED:
-        raise InvalidCredentialsException("Your account has been blocked by the admin.")
+        raise AccountBlockedException("Your account has been blocked by the admin.")
 
 
     token_pair = generate_token(user)
@@ -63,3 +64,15 @@ def refresh_user_service(user_id):
         "access_token": token_pair["access_token"],
         "refresh_token": token_pair["refresh_token"]
     }
+
+def get_user_details_service(id):
+    user = UserRepository.find_by_id(id)
+    if not user:
+        raise ResourceNotFoundException("User not found")
+        
+    if user.role == UserRole.COMPANY:
+        return CompanyProfileDTO().dump(user)
+    elif user.role == UserRole.STUDENT:
+        return StudentProfileDTO().dump(user)
+
+    return {"message": "Profile hidden"}

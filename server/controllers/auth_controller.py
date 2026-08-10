@@ -1,4 +1,4 @@
-from server.services import register_user_service, login_user_service, refresh_user_service
+from server.services.auth_service import *
 from flask import Blueprint, request, jsonify
 from server.dto import RegistrationDTO, LoginDTO
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -32,4 +32,11 @@ def refresh():
     response = refresh_user_service(user_id)
 
     return jsonify(response), 201
+    
+@auth.route("/users/<int:id>", methods=["GET"])
+@jwt_required()
+def get_user_details(id):
+    response = get_user_details_service(id)
+
+    return jsonify(response), 200
     

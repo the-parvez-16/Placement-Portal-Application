@@ -52,12 +52,40 @@ const handleBack = () => {
         </div>
       </div>
 
-      <!-- EDIT PROFILE -->
-      <div v-else-if="navbarState.showBackBtn" class="d-flex align-items-center gap-2">
-        <h3 class="fw-bold mb-0 fs-5">{{ navbarState.title }}</h3>
-        <button @click="handleBack" class="ms-auto portal-btn portal-btn-dark text-decoration-none">
-          {{ navbarState.backText || '← Back' }}
-        </button>
+      <!-- EDIT PROFILE & LIST PAGES -->
+      <div v-else-if="navbarState.showBackBtn">
+        
+        <!-- Desktop View -->
+        <div class="d-none d-md-flex align-items-center gap-2">
+            <h3 class="fw-bold mb-0 fs-5">{{ navbarState.title }}</h3>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                
+                <form v-if="navbarState.showSearch" @submit.prevent="handleSearch" class="d-flex mb-0">
+                    <input v-model="navbarState.searchQuery" type="text" :placeholder="navbarState.searchPlaceholder || 'Search...'" class="portal-search-input" style="width:260px;" aria-label="Search" />
+                    <button class="portal-btn portal-btn-primary" style="border-radius:0 5px 5px 0; height:36px; padding: 0 15px;" type="submit">Search</button>
+                </form>
+
+                <button @click="handleBack" class="portal-btn portal-btn-dark text-decoration-none">
+                  <VsxIcon iconName="Back" :size="20" type="linear" /> Back
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="d-flex d-md-none flex-column gap-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="fw-bold mb-0 fs-5">{{ navbarState.title }}</h3>
+                <button @click="handleBack" class="portal-btn portal-btn-dark text-decoration-none">
+                  <VsxIcon iconName="Back" :size="20" type="linear" />
+                </button>
+            </div>
+            
+            <form v-if="navbarState.showSearch" @submit.prevent="handleSearch" class="d-flex w-100">
+                <input v-model="navbarState.searchQuery" type="text" :placeholder="navbarState.searchPlaceholder || 'Search...'" class="portal-search-input flex-grow-1" aria-label="Search" />
+                <button class="portal-btn portal-btn-primary" style="border-radius:0 5px 5px 0; height:36px; padding: 0 15px;" type="submit">Search</button>
+            </form>
+        </div>
+
       </div>
       
       <!-- DASHBOARDS -->

@@ -35,10 +35,10 @@ const formatDate = (dateString) => {
         <tbody>
           <tr v-for="(app, index) in applications" :key="app.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ app.student.name }}</td>
-            <td>{{ app.drive.job_title }}</td>
-            <td>{{ app.drive.company.name }}</td>
-            <td>{{ formatDate(app.applied_at) }}</td>
+            <td>{{ app.studentName }}</td>
+            <td>{{ app.jobTitle }}</td>
+            <td>{{ app.companyName }}</td>
+            <td>{{ formatDate(app.appliedAt) }}</td>
             <td>
               <router-link
                 :to="`/admin/application/${app.id}`"
