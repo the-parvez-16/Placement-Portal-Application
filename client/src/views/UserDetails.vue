@@ -28,7 +28,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="row justify-content-center w-100">
+  <div class="row justify-content-center w-100 m-0">
       <div class="col-12 col-lg-8">
           
           <StudentDetails v-if="userRole === 'student'" :student="userData" />

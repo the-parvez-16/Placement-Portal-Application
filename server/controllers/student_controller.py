@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt
+from flask import Blueprint, request, jsonify, current_app
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.student_service import *
 from server.models import UserRole
 from server.dto import StudentProfileDTO
+import os
+from werkzeug.utils import secure_filename
 
 student = Blueprint("student", __name__, url_prefix="/api/student")
 
@@ -27,14 +29,34 @@ def update_student_profile_api():
     if claims.get("role") != UserRole.STUDENT.value:
         return jsonify({"message": "Unauthorized"}), 401
 
-    data = StudentProfileDTO().load(request.get_json())
-
     user_id = get_jwt_identity()
+
+    form_data = request.form.to_dict()
+    data = {
+        "student": {
+            "name": form_data.get("name"),
+            "branch": form_data.get("branch"),
+            "cgpa": float(form_data.get("cgpa")) if form_data.get("cgpa") else None,
+            "expected_graduation_year": int(form_data.get("expectedGraduationYear")) if form_data.get("expectedGraduationYear") else None,
+            "skills": form_data.get("skills")
+        }
+    }
+
+    file = request.files.get("resumeFile")
+    if file and file.filename:
+        filename = secure_filename(f"user_{user_id}_{file.filename}")
+        upload_dir = os.path.join(current_app.root_path, "static", "resumes")
+        os.makedirs(upload_dir, exist_ok=True)
+        file.save(os.path.join(upload_dir, filename))
+        data["student"]["resume_file"] = f"http://localhost:5000/static/resumes/{filename}"
+    else:
+        data["student"]["resume_file"] = form_data.get("resumeFile")
+
     updated_user = update_student_profile(user_id, data)
-
     response_data = StudentProfileDTO().dump(updated_user)
-
+    
     return jsonify({
-        "message": "Profile updated successfully!", 
+        "message": "Profile updated successfully!",
         "profile": response_data
     }), 200
+

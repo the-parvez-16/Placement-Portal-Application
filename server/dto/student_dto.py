@@ -10,7 +10,7 @@ class StudentProfileDTO(Schema):
     branch = fields.String(required=True, validate=validate.Length(min=2), attribute="student.branch")
     cgpa = fields.Float(required=True, validate=validate.Range(min=0, max=10), attribute="student.cgpa")
     skills = fields.String(required=True, validate=validate.Length(min=1), attribute="student.skills")
-    graduationYear = fields.Int(required=True, validate=validate.Range(min=2020, max=2030), attribute="student.expected_graduation_year")
+    expectedGraduationYear = fields.Int(required=True, validate=validate.Range(min=2020, max=2030), attribute="student.expected_graduation_year")
     resumeFile = fields.String(required=True, validate=validate.Length(min=1), attribute="student.resume_file")
     status = fields.Function(lambda obj: obj.status.value, dump_only=True)
     role = fields.Function(lambda obj: obj.role.value, dump_only=True)

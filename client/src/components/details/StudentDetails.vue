@@ -38,18 +38,15 @@ const toggleStatus = async (action, id) => {
         <h2 class="fs-4 fw-bold mb-1">{{ student.name }}</h2>
         <span class="fs-6 fw-bold text-muted">{{ student.email }}</span>
       </div>
-      <span class="portal-btn portal-btn-dark" style="pointer-events: none"
-        >Status: {{ student.status }}</span
+      <span class="portal-btn" style="pointer-events: none"
+        :class="{
+            'portal-btn-success': student.status.toLowerCase() === 'approved',
+            'portal-btn-danger': student.status.toLowerCase() === 'blocked',
+            'portal-btn-warning': student.status.toLowerCase() === 'pending'
+        }"
       >
-    </div>
-
-    <div class="mb-4">
-      <strong class="d-block mb-2 border-bottom border-dark pb-1 fs-5"
-        >Education History</strong
-      >
-      <p style="white-space: pre-wrap; font-size: 15px; line-height: 1.6">
-        {{ student.education || "Not Provided" }}
-      </p>
+        Status: {{ student.status }}
+      </span>
     </div>
 
     <div class="mb-4">
@@ -72,7 +69,7 @@ const toggleStatus = async (action, id) => {
       </div>
       <div class="col-12 col-md-4">
         <strong class="d-block mb-1 border-bottom border-dark pb-1 fs-5">Graduation Year</strong>
-        <span class="fs-5">{{ student.graduationYear || 'N/A' }}</span>
+        <span class="fs-5">{{ student.expectedGraduationYear || 'N/A' }}</span>
       </div>
     </div>
 
@@ -82,8 +79,8 @@ const toggleStatus = async (action, id) => {
         >Resume Document</strong
       >
       <a
-        v-if="student.resumeUrl"
-        :href="student.resumeUrl"
+        v-if="student.resumeFile"
+        :href="student.resumeFile"
         target="_blank"
         class="text-decoration-none portal-btn portal-btn-primary mb-0 d-inline-block mt-2"
         >View Resume ↗</a

@@ -37,19 +37,25 @@ const handleAction = async (action, id) => {
 <template>
   <div>
     <section class="portal-card p-4 mb-4 mt-2">
-        <div class="border-bottom border-dark pb-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div
+            class="border-bottom border-dark pb-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3"
+            >
             <div>
                 <h2 class="fs-4 fw-bold mb-1">{{ company.name }}</h2>
-                <span class="fs-6 fw-bold text-muted">Status: {{ company.status }}</span>
+                <span class="fs-6 fw-bold text-muted">{{ company.email }}</span>
             </div>
+            <span class="portal-btn" style="pointer-events: none"
+                :class="{
+                    'portal-btn-success': company.status.toLowerCase() === 'approved',
+                    'portal-btn-danger': company.status.toLowerCase() === 'blocked',
+                    'portal-btn-warning': company.status.toLowerCase() === 'pending'
+                }"
+            >
+                Status: {{ company.status }}
+            </span>
         </div>
 
         <div class="row mb-4 g-3">
-            <div class="col-12 col-md-6">
-                <strong class="d-block mb-1">Contact Email</strong>
-                <span class="fs-5">{{ company.email }}</span>
-            </div>
-            
             <div class="col-12 col-md-6">
                 <strong class="d-block mb-1">HR Contact</strong>
                 <span class="fs-5">{{ company.hr_contact || 'Not Provided' }}</span>
