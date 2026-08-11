@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <section class="portal-card p-3 mb-4">
-    <h2 class="fs-6 fw-bold border-bottom border-dark pb-2 mb-3">Closed Drives</h2>
+    <h2 class="fs-6 fw-bold border-bottom border-dark pb-2 mb-3">Rejected Drives</h2>
 
     <div class="table-responsive">
         <table class="table table-sm mb-0" style="font-size:14px;">
@@ -27,7 +27,7 @@ defineProps({
                     <td>
                         <div class="d-flex gap-2 flex-wrap">
                             <router-link :to="`/drive/${drive.id}`" class="portal-btn portal-btn-dark text-decoration-none">View Details</router-link>
-                            <button @click="$emit('updateStatus', drive.id, 'approved')" class="portal-btn portal-btn-primary">Re-open Drive</button>
+                            <button @click="$emit('updateStatus', drive.id, 'pending')" class="portal-btn portal-btn-primary">Re-Apply Drive</button>
                         </div>
                     </td>
                 </tr>

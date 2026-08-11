@@ -4,12 +4,19 @@ import { navbarState, authState } from '@/store';
 import Pagination from '@/components/Pagination.vue';
 import api from '@/services/api';
 import { useRoute } from "vue-router";
+import { formatDate } from '@/utils/formatters';
 
 const route = useRoute();
 
 const isCompany = computed(() => authState.value.role === 'company');
 const applications = ref([
-    { id: 501, student_name: 'Demon16', drive_title: 'Software Engineer', applied_at: '10-08-2026', status: 'PENDING' }
+    { 
+        id: "",
+        student_name: "",
+        drive_title: "",
+        applied_at: "",
+        status: "" 
+    }
 ]);
 
 const currentPage = ref(1);
@@ -57,7 +64,7 @@ const loadData = async (page = 1) => {
                     <th>ID</th>
                     <th>Student Name</th>
                     <th>Drive</th>
-                    <th>Date</th>
+                    <th>Applied Date</th>
                     <th>Status</th>
                     <th class="text-end">Action</th>
                 </tr>
@@ -67,7 +74,7 @@ const loadData = async (page = 1) => {
                     <td class="align-middle">{{ app.id }}</td>
                     <td class="align-middle fw-semibold">{{ app.student_name }}</td>
                     <td class="align-middle">{{ app.drive_title }}</td>
-                    <td class="align-middle">{{ app.applied_at }}</td>
+                    <td class="align-middle">{{ formatDate(app.applied_at) }}</td>
                     <td class="align-middle text-capitalize">{{ app.status }}</td>
                     <td class="text-end">
                         <!-- Company review karti hai, Admin dono kar sakta hai -->

@@ -9,6 +9,11 @@ def register_error_handlers(app):
     def handle_validation_error(err):
         return jsonify({"error": err.messages}), 400
 
+    
+    @app.errorhandler(ValueError)
+    def handle_value_error(err):
+        return jsonify({"error": str(err)}), 400
+
 
     @app.errorhandler(IncompleteProfileException)
     def handle_incomplete_profile_exception(err):

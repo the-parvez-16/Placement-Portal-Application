@@ -3,20 +3,41 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { authState, alertState, navbarState } from '@/store';
 import api from '@/services/api';
+import { formatDate, formatDateForInput } from '@/utils/formatters';
 
 const route = useRoute();
 const drive = ref({});
 const alreadyApplied = ref(false); 
 const userRole = computed(() => authState.value.role);
-const emit = defineEmits(['driveUpdated', 'driveDeleted']);
+const applicationStatus = ref('');
 
 const editForm = ref({});
 onMounted(async () => {
     try {
         const driveId = route.params.id;
-        const res = await api.get(`/student/drive/${driveId}`);
+        const role = authState.value.role;
+        const baseUrl = (role === 'admin' || role === 'sudo') ? '/admin' : `/${role}`;
+            
+        const res = await api.get(`${baseUrl}/drive/${driveId}`);
         drive.value = res.data;
-        editForm.value = { ...res.data };
+        const editableData = { ...res.data };
+        if (editableData.application_deadline) {
+            editableData.application_deadline = formatDateForInput(editableData.application_deadline);
+        }
+        
+        editForm.value = editableData;
+        if (role === 'student') {
+            try {
+                const checkRes = await api.get(`/student/drive/${driveId}/check-application`);
+                alreadyApplied.value = checkRes.data.applied;
+                if (checkRes.data.applied) {
+                    applicationStatus.value = checkRes.data.status; 
+                }
+            } catch (err) {
+                console.error("Failed to check application status");
+            }
+        }
+
     } catch (err) {
         alertState.value = { type: 'danger', message: 'Failed to load drive details.' };
     }
@@ -29,22 +50,24 @@ onMounted(async () => {
     };
 });
 
-const formatDate = (dateString) => {
-    if (!dateString) return 'Not Specified';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB').replace(/\//g, '-'); 
-};
-
 const performAction = async (action) => {
     const driveId = route.params.id;
-    
+        
     if (action === 'delete' && !confirm('Are you sure you want to delete this drive?')) return;
     if (action === 'reject' && !confirm('Are you sure you want to reject this drive?')) return;
     try {
         if (action === 'apply') {
-            await api.post(`/student/apply/${driveId}`);
-            alreadyApplied.value = true;
-            alertState.value = { type: 'success', message: `Application successful!` };
+            try {
+                await api.post(`/student/apply/${driveId}`);
+                alertState.value = { type: 'success', message: 'Successfully applied to the drive!' };
+                alreadyApplied.value = true;
+            } catch (err) {
+                alertState.value = { 
+                    type: 'warning', 
+                    message: err.response?.data?.message || 'Please complete your profile before applying!' 
+                };
+            }
+            return;
         } else if (action === 'approve') {
             await api.put(`/admin/drives/${driveId}/status`, { status: "approved" });
             alertState.value = { type: 'success', message: `Drive approved successfully!` };
@@ -58,8 +81,17 @@ const performAction = async (action) => {
             alertState.value = { type: 'danger', message: 'Delete not implemented in backend yet!' };
             return;
         }
-        const res = await api.get(`/student/drive/${driveId}`);
+        const role = authState.value.role;
+        const baseUrl = (role === 'admin' || role === 'sudo') ? '/admin' : `/${role}`;
+            
+        const res = await api.get(`${baseUrl}/drive/${driveId}`);
         drive.value = res.data;
+        const editableData = { ...res.data };
+        if (editableData.application_deadline) {
+            editableData.application_deadline = formatDateForInput(editableData.application_deadline);
+        }
+        
+        editForm.value = editableData;
         
     } catch (err) {
         console.error(err);
@@ -69,12 +101,17 @@ const performAction = async (action) => {
 
 const updateDrive = async () => {
     try {
-        console.log('Updating drive data:', editForm.value);
-        // await api.put(`/company/edit_drive/${props.drive.id}`, editForm.value);
+        const driveId = route.params.id;
+        await api.put(`/company/drive/${driveId}`, editForm.value);
         
         alertState.value = { type: 'success', message: 'Drive updated successfully!' };
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
         document.querySelector('#editDriveModal .btn-close').click();
-        emit('driveUpdated');
+        const res = await api.get(`/company/drive/${driveId}`);
+        drive.value = res.data;
+        
     } catch (err) {
         alertState.value = { type: 'danger', message: 'Failed to update drive.' };
     }
@@ -137,9 +174,9 @@ const updateDrive = async () => {
                           <button class="portal-btn portal-btn-primary mb-0" data-bs-toggle="modal" data-bs-target="#editDriveModal">
                               Edit Drive
                           </button>
-                          <button @click="performAction('delete')" class="portal-btn portal-btn-danger mb-0">
+                          <!-- <button @click="performAction('delete')" class="portal-btn portal-btn-danger mb-0">
                               Delete Drive
-                          </button>
+                          </button> -->
                       </template>
 
                       <template v-else-if="userRole === 'admin' || userRole === 'sudo'">
@@ -153,13 +190,20 @@ const updateDrive = async () => {
                       </template>
 
                       <template v-else-if="userRole === 'student'">
-                          <button v-if="!alreadyApplied" @click="performAction('apply')" class="portal-btn portal-btn-success mb-0">
-                              Apply Now
-                          </button>
+                          <template v-if="drive.status?.toLowerCase() === 'approved'">
+                              <button v-if="!alreadyApplied" @click="performAction('apply')" class="portal-btn portal-btn-success mb-0">
+                                  Apply Now
+                              </button>
+                              <span v-else class="portal-btn portal-btn-dark mb-0" style="pointer-events: none;">
+                                  Status: <span style="text-transform: capitalize;">{{ applicationStatus }}</span>
+                              </span>
+                          </template>
+                          
                           <span v-else class="portal-btn portal-btn-dark mb-0" style="pointer-events: none;">
-                              Already Applied
+                              Applications Closed
                           </span>
                       </template>
+
                   </div>
               </section>
           </div>

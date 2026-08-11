@@ -1,20 +1,12 @@
 <script setup>
+import { formatDate } from '@/utils/formatters';
+
 defineProps({
   applications: {
     type: Array,
     default: () => []
   }
 });
-
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).replace(/\//g, '-');
-};
 </script>
 
 <template>
@@ -36,8 +28,8 @@ const formatDate = (dateString) => {
               <tbody>
                   <tr v-for="(app, index) in applications" :key="app.id">
                       <td>{{ index + 1 }}</td>
-                      <td>{{ app.drive.job_title }}</td>
-                      <td>{{ app.drive.company.name }}</td>
+                      <td>{{ app.drive_title }}</td>
+                      <td>{{ app.company_name }}</td>
                       <td>{{ formatDate(app.applied_at) }}</td>
                       <td>
                           <span class="badge bg-secondary text-white text-capitalize">

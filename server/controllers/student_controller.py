@@ -3,10 +3,10 @@ from server.services.application_service import apply_for_drive
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.student_service import *
-from server.services.drive_service import get_approved_drives
-from server.services.application_service import get_student_applications
+from server.services.drive_service import *
+from server.services.application_service import *
 from server.models import UserRole
-from server.dto import StudentProfileDTO, ApplicationDTO, DriveListDTO, ApplicationListDTO
+from server.dto import *
 import os
 from werkzeug.utils import secure_filename
 
@@ -67,7 +67,7 @@ def update_student_profile_api():
 
 @student.route("/drives", methods=["GET"])
 @jwt_required()
-def get_available_drives_api():
+def get_approved_drives_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
         return jsonify({"message": "Unauthorized"}), 401
@@ -113,8 +113,25 @@ def get_my_applications_api():
 @student.route("/drive/<int:drive_id>", methods=["GET"])
 @jwt_required()
 def get_drive_api(drive_id):
-    drive = DriveRepository.find_by_id(drive_id)
-    if not drive:
-        return jsonify({"error": "Drive not found"}), 404
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
 
-    return jsonify(DriveListDTO().dump(drive)), 200
+    drive = get_drive_by_id(drive_id)
+    return jsonify(DriveDTO().dump(drive)), 200
+
+
+@student.route("/drive/<int:drive_id>/check-application", methods=["GET"])
+@jwt_required()
+def check_application_api(drive_id):
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    user_id = get_jwt_identity()
+    application = check_student_application(user_id, drive_id)
+    
+    if application:
+        return jsonify({"applied": True, "status": application.status.value}), 200
+    else:
+        return jsonify({"applied": False}), 200

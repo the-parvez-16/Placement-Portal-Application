@@ -16,6 +16,7 @@ class DriveStatus(Enum):
     PENDING = "pending"
     APPROVED = "approved"
     CLOSED = "closed"
+    REJECTED = "rejected"
 
 class ApplicationStatus(Enum):
     APPLIED = "applied"

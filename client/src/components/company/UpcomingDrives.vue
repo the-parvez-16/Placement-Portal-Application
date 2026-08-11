@@ -5,6 +5,7 @@ defineProps({
     default: () => []
   }
 });
+const emit = defineEmits(['updateStatus']);
 </script>
 
 <template>
@@ -32,8 +33,7 @@ defineProps({
                     <td>
                         <div class="d-flex gap-2 flex-wrap">
                             <router-link :to="`/drive/${drive.id}`" class="portal-btn portal-btn-dark">View Details</router-link>
-                            <!-- API integration ke waqt isko event emit mein badal denge -->
-                            <button class="portal-btn portal-btn-success">Mark as Complete</button> 
+                            <button @click="$emit('updateStatus', drive.id, 'closed')" class="portal-btn portal-btn-success">Mark as Complose</button>
                         </div>
                     </td>
                 </tr>

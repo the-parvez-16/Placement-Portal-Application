@@ -1,6 +1,6 @@
 from server.repositories import UserRepository, DriveRepository, ApplicationRepository
 from server.models import UserRole, UserStatus, DriveStatus
-from server.dto import PendingCompanyDTO, PendingDriveDTO, RecentApplicationDTO, AdminCompanyListDTO, AdminStudentListDTO
+from server.dto import *
 from server.exceptions import ResourceNotFoundException
 
 def get_admin_dashboard_stats():
@@ -38,7 +38,7 @@ def get_admin_recent_applications():
     recent_apps = ApplicationRepository.get_recent_applications(limit=5)
     return RecentApplicationDTO(many=True).dump(recent_apps)
 
-def update_user_status(user_id: int, new_status: str):
+def admin_update_user_status(user_id: int, new_status: str):
     user = UserRepository.find_by_id(user_id)
     if not user:
         raise ResourceNotFoundException(f"User with ID {user_id} not found!")
@@ -49,7 +49,7 @@ def update_user_status(user_id: int, new_status: str):
     return {"message": "User status updated successfully"}
 
 
-def update_drive_status(id, new_status):
+def admin_update_drive_status(id, new_status):
     drive = DriveRepository.find_by_id(id)
     if not drive:
         raise ResourceNotFoundException(f"Drive with ID {id} not found!")
@@ -84,7 +84,7 @@ def get_admin_students(page, search_query=""):
 
 def get_admin_drives(page, search_query=""):
     paginated_result = DriveRepository.get_paginated_drives(page, search_query)
-    dumped_items = AdminDriveListDTO(many=True).dump(paginated_result.items)
+    dumped_items = DriveListDTO(many=True).dump(paginated_result.items)
     
     return {
         "drives": dumped_items,
@@ -95,7 +95,7 @@ def get_admin_drives(page, search_query=""):
 
 def get_admin_applications(page, search_query=""):
     paginated_result = ApplicationRepository.get_paginated_applications(page, search_query)
-    dumped_items = AdminApplicationListDTO(many=True).dump(paginated_result.items)
+    dumped_items = ApplicationListDTO(many=True).dump(paginated_result.items)
     
     return {
         "applications": dumped_items,

@@ -12,18 +12,21 @@ const userRole = computed(() => authState.value.role);
 // Reactive state matching the DB schema
 const application = ref({
     id: applicationId,
-    status: 'APPLIED',
+    status: "",
+    applied_at : "",
+    drive: {
+        id:"",
+        company: null,
+        job_title: ""
+    },
     student: {
-        name: '',
-        email: '',
-        branch: '',
+        name: "",
+        email: "",
+        branch: "",
         cgpa: null,
         graduation_year: null,
-        skills: '',
-        resume_file: ''
-    },
-    drive: {
-        job_title: ''
+        skills: "",
+        resume_file: ""
     }
 });
 
@@ -40,27 +43,12 @@ onMounted(async () => {
 });
 const fetchApplication = async () => {
     try {
-        const response = await api.get(`/company/applications/${applicationId}`);
-        console.log(response.data)
-                // Grab the data whether it's an array or an object!
-        const data = Array.isArray(response.data) ? response.data[0] : response.data;
+        const role = authState.value.role;
+        const baseUrl = (role === 'admin' || role === 'sudo') ? '/admin' : `/${role}`;
         
-        application.value = {
-            id: data.id || applicationId,
-            status: data.status || 'APPLIED',
-            student: data.student || {
-                name: data.student_name || 'Dummy Student',
-                email: 'student@example.com',
-                branch: data.student_branch || 'Not Provided',
-                cgpa: data.student_cgpa || 8.5,
-                graduation_year: 2024,
-                skills: 'Python, Vue.js',
-                resume_file: ''
-            },
-            drive: data.drive || {
-                job_title: data.drive_title || 'Software Engineer'
-            }
-        };
+        const response = await api.get(`${baseUrl}/applications/${applicationId}`);
+        
+        application.value = response.data
 
     } catch (error) {
         console.error("Failed to load application:", error);
@@ -77,11 +65,16 @@ const updateStatus = async () => {
         await api.put(`/company/applications/${applicationId}/status`, { status: newStatus.value });
 
         application.value.status = newStatus.value;
-        alertState.value = { type: 'success', message: `Application status updated to ${newStatus.value}!` };
+        alertState.value = {
+            type: 'success',
+            message: `Application status updated to ${newStatus.value}!`
+        };
         newStatus.value = ''; 
     } catch (err) {
-        console.error(err);
-        alertState.value = { type: 'danger', message: 'Failed to update application status.' };
+        alertState.value = {
+            type: "danger",
+            message: err.response.data.error
+        };
     }
 };
 </script>
@@ -150,10 +143,10 @@ const updateStatus = async () => {
                           <!-- Enum ApplicationStatus: APPLIED, SHORTLISTED, INTERVIEW, SELECTED, REJECTED -->
                           <select v-model="newStatus" class="portal-search-input" style="width: 250px;" required>
                               <option value="" disabled>Select new status...</option>
-                              <option value="SHORTLISTED">Shortlisted</option>
-                              <option value="INTERVIEW">Called for Interview</option>
-                              <option value="SELECTED">Final Selection</option>
-                              <option value="REJECTED">Rejected</option>
+                              <option value="shortlisted">Shortlisted</option>
+                              <option value="interview">Called for Interview</option>
+                              <option value="selected">Final Selection</option>
+                              <option value="rejected">Rejected</option>
                           </select>
                           
                           <button type="submit" class="portal-btn portal-btn-success" :disabled="!newStatus">

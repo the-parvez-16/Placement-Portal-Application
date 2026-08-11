@@ -24,6 +24,10 @@ const submitDrive = async () => {
         };
         await api.post('/company/drives', payload);
         alertState.value = { type: 'success', message: 'Drive created successfully! Refresh to see it.' };
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+        document.querySelector('#createDriveModal .btn-close').click();
     } catch (err) {
         alertState.value = { type: 'danger', message: 'Failed to create drive.' };
     }

@@ -1,7 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
 from server.services.admin_service import *
+from server.services.application_service import *
+from server.services.drive_service import *
 from server.models import UserRole, UserStatus, DriveStatus
+from server.dto import *
 
 admin = Blueprint("admin", __name__, url_prefix="/api/admin")
 
@@ -57,7 +60,7 @@ def update_user_status_api(id):
     if new_status not in valid_user_statuses:
         return jsonify({"error": "Invalid status value!"}), 400
     
-    response = update_user_status(id, new_status)
+    response = admin_update_user_status(id, new_status)
 
     return jsonify(response), 200
 
@@ -76,7 +79,7 @@ def update_drive_status_api(id):
     if new_status not in valid_drive_statuses:
         return jsonify({"error": "Invalid status value!"}), 400
     
-    response = update_drive_status(id, new_status)
+    response = admin_update_drive_status(id, new_status)
 
     return jsonify(response), 200
 
@@ -139,6 +142,32 @@ def admin_get_applications():
     response = get_admin_applications(page, query)
     
     return jsonify(response), 200
+
+
+
+@admin.route("/applications/<int:application_id>", methods=["GET"])
+@jwt_required()
+def get_single_application_api(application_id):
+    claims = get_jwt()
+    if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    app = get_application_by_id(application_id)
+    
+    return jsonify(ApplicationReviewDTO().dump(app)), 200
+
+
+@admin.route("/drive/<int:drive_id>", methods=["GET"])
+@jwt_required()
+def admin_get_single_drive(drive_id):
+    claims = get_jwt()
+    if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    drive = get_drive_by_id(drive_id)
+    return jsonify(DriveDTO().dump(drive)), 200
+
+
 
 
 from server.workers.tasks import export_csv_task
