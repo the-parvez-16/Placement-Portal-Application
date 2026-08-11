@@ -4,6 +4,7 @@ class PendingCompanyDTO(Schema):
     id = fields.Int(dump_only=True)
     email = fields.String(dump_only=True)
     company_name = fields.Function(lambda obj: obj.company.name if obj.company else "N/A", dump_only=True)
+    industry = fields.Function(lambda obj: obj.company.industry if obj.company else "N/A", dump_only=True)
     
 class CompanyProfileDTO(Schema):
     class Meta:

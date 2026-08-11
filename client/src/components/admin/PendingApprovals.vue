@@ -24,7 +24,7 @@ defineEmits(['approveCompany', 'approveDrive']);
           :key="user.id"
           class="portal-list-row d-flex flex-wrap justify-content-between align-items-center gap-2 py-2"
         >
-          <span>{{ user.company_name }}</span>
+          <span>{{ user.company_name }} <span class="text-muted" style="font-size: 0.9em;">- {{ user.industry }}</span></span>
           <div class="d-flex gap-2 align-items-center">
             <router-link
               :to="`/user/${user.id}`"
