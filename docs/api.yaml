@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Placement Portal API
+  version: 1.0.0
+servers:
+  - url: /api
+paths:
+  /auth/register: { post: { summary: Register new user } }
+  /auth/login: { post: { summary: Login user } }
+  /auth/refresh: { post: { summary: Refresh token } }
+  
+  /student/profile: 
+    get: { summary: Get student profile }
+    put: { summary: Update student profile }
+  /student/drives: { get: { summary: Get available drives } }
+  /student/apply/{drive_id}: { post: { summary: Apply to drive } }
+  /student/applications: { get: { summary: Get student applications } }
+  /student/companies: { get: { summary: Get companies list } }
+  /student/export: { post: { summary: Export applications to CSV } }
+  
+  /company/profile:
+    get: { summary: Get company profile }
+    put: { summary: Update company profile }
+  /company/drives:
+    get: { summary: Get company drives }
+    post: { summary: Post new drive }
+  /company/drive/{drive_id}/applications: { get: { summary: Get applications for drive } }
+  /company/applications/{application_id}/status: { put: { summary: Update application status } }
+  /company/export: { post: { summary: Export company data to CSV } }
+
+  /admin/dashboard/stats: { get: { summary: Get admin stats } }
+  /admin/dashboard/pending: { get: { summary: Get pending approvals } }
+  /admin/users/{id}/status: { put: { summary: Update user status } }
+  /admin/drives/{id}/status: { put: { summary: Update drive status } }
+  /admin/companies: { get: { summary: Get all companies } }
+  /admin/students: { get: { summary: Get all students } }

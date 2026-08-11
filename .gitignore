@@ -11,3 +11,5 @@ venv/
 .agents/
 project-*.md
 logs/
+server/core/static/resumes
+server/core/static/exports
