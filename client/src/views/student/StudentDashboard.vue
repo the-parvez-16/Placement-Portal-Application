@@ -1,12 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { navbarState, alertState } from '@/store';
 import OrganizationsList from '@/components/student/OrganizationsList.vue';
 import AppliedDrives from '@/components/student/AppliedDrives.vue';
 import AvailableDrives from '@/components/student/AvailableDrives.vue';
 import api from "@/services/api"
+import { useRoute } from 'vue-router';
 
-// Ye data backend API se fetch hoga
+const route = useRoute();
+
 const studentName = ref("Student"); 
 const companiesList = ref([]);
 const studentApplications = ref([]);
@@ -14,12 +16,13 @@ const approvedDrivesList = ref([]);
 
 onMounted(async () => {
     try {
-        const profileRes = await api.get("/student/profile")
-        const drivesRes = await api.get('/student/drives');
-        const applicationRes = await api.get('/student/applications');
+        const profileRes = await api.get("/student/profile");
         studentName.value = profileRes.data.name;
-        approvedDrivesList.value = drivesRes.data;
+
+        const applicationRes = await api.get('/student/applications');
         studentApplications.value = applicationRes.data;
+
+        await fetchDashboardData(route.query.q || "");
     } catch(err) {
         alertState.value = { type: "danger", message: "Failed to load drives" };
     }
@@ -33,6 +36,24 @@ onMounted(async () => {
     };
 
 });
+
+watch(() => route.query.q, async (newQuery) => {
+    await fetchDashboardData(newQuery || "");
+});
+
+
+const fetchDashboardData = async (searchQuery = "") => {
+    try {
+        const drivesRes = await api.get(`/student/drives?q=${searchQuery}`);
+        approvedDrivesList.value = drivesRes.data;
+
+        const compRes = await api.get(`/student/companies?q=${searchQuery}`);
+        companiesList.value = compRes.data;
+    } catch(err) {
+        console.error("Failed to load dashboard data", err);
+    }
+}
+
 </script>
 
 <template>

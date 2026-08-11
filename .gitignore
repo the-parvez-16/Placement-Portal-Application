@@ -10,3 +10,4 @@ instance/
 venv/
 .agents/
 project-*.md
+logs/

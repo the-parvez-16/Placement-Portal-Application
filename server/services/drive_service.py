@@ -7,6 +7,9 @@ def create_placement_drive(user_id: int, drive_data: dict):
     company = CompanyRepository.get_by_user_id(user_id)
     if company is None:
         raise ResourceNotFoundException("Company not found")
+    
+    if company.user.status.value != "approved":
+        raise ValueError("Only approved companies can post drives.")
 
     job_title = drive_data.get("job_title")
     job_description = drive_data.get("job_description")

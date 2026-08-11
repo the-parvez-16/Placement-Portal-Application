@@ -135,3 +135,18 @@ def check_application_api(drive_id):
         return jsonify({"applied": True, "status": application.status.value}), 200
     else:
         return jsonify({"applied": False}), 200
+
+
+@student.route("/companies", methods=["GET"])
+@jwt_required()
+def get_student_companies_api():
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    from server.services.admin_service import get_admin_companies
+    query = request.args.get("q", "")
+    response = get_admin_companies(1, query)
+    approved_companies = [c for c in response["companies"] if c["status"] == "approved"]
+    
+    return jsonify(approved_companies), 200

@@ -2,7 +2,7 @@ from server.repositories import UserRepository, StudentRepository, CompanyReposi
 from server.core.security import hash_password, verify_password, generate_token
 from server.models import User, Student, Company, UserRole, UserStatus
 from server.exceptions import ResourceNotFoundException, ResourceAlreadyExistsException, InvalidCredentialsException, AccountBlockedException
-from server.dto import CompanyProfileDTO, StudentProfileDTO
+from server.dto import CompanyDetailsDTO, StudentProfileDTO
 
 def register_user_service(data):
     name = data["name"]
@@ -71,7 +71,7 @@ def get_user_details_service(id):
         raise ResourceNotFoundException("User not found")
         
     if user.role == UserRole.COMPANY:
-        return CompanyProfileDTO().dump(user)
+        return CompanyDetailsDTO().dump(user)
     elif user.role == UserRole.STUDENT:
         return StudentProfileDTO().dump(user)
 

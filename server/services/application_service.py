@@ -1,6 +1,6 @@
-from server.repositories import ApplicationRepository, StudentRepository
+from server.repositories import ApplicationRepository, StudentRepository, DriveRepository
 from server.exceptions import ResourceAlreadyExistsException, InvalidStatusTransitionException
-from server.models import Application, ApplicationStatus
+from server.models import Application, ApplicationStatus, DriveStatus
 
 def apply_for_drive(user_id: int, drive_id: int):
     drive = DriveRepository.find_by_id(drive_id)

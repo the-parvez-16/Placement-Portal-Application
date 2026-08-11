@@ -37,7 +37,7 @@ defineProps({
                           </span>
                       </td>
                       <td>
-                          <router-link :to="`/drive/${app.drive.id}`" class="portal-btn portal-btn-primary">
+                          <router-link :to="`/drive/${app.drive_id}`" class="portal-btn portal-btn-primary">
                               View Details
                           </router-link>
                       </td>

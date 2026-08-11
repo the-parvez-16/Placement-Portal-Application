@@ -1,5 +1,5 @@
 from server.core.extensions import db
-from server.models import User, UserRole, UserStatus, Company
+from server.models import User, UserRole, UserStatus, Company, Student
 from server.repositories import BaseRepository
 from sqlalchemy import func, select, or_
 

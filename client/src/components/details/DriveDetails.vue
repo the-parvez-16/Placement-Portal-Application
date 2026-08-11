@@ -64,7 +64,7 @@ const performAction = async (action) => {
             } catch (err) {
                 alertState.value = { 
                     type: 'warning', 
-                    message: err.response?.data?.message || 'Please complete your profile before applying!' 
+                    message: err.response?.data?.error || 'Please complete your profile before applying!' 
                 };
             }
             return;

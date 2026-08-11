@@ -36,3 +36,20 @@ class AdminCompanyListDTO(Schema):
     industry = fields.Function(lambda obj: obj.company.industry if obj.company else "N/A", dump_only=True)
     location = fields.Function(lambda obj: obj.company.location if obj.company else "N/A", dump_only=True)
     status = fields.Function(lambda obj: obj.status.value, dump_only=True)
+
+class CompanyDetailsDTO(CompanyProfileDTO):
+    drives = fields.Method("get_company_drives", dump_only=True)
+
+    def get_company_drives(self, obj):
+        if not obj.company or not obj.company.placement_drives:
+            return []
+        return [
+            {
+                "id": drive.id,
+                "job_title": drive.job_title,
+                "status": drive.status.value,
+                "created_at": drive.created_at.isoformat(),
+                "salary": drive.salary if drive.salary else "Not Specified"
+            }
+            for drive in obj.company.placement_drives
+        ]

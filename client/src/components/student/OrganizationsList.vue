@@ -14,7 +14,7 @@ defineProps({
       <template v-if="companies.length > 0">
           <div v-for="company in companies" :key="company.id" class="portal-list-row d-flex justify-content-between align-items-center py-2">
               <span>{{ company.name }}</span>
-              <router-link :to="`/company/${company.id}`" class="portal-btn portal-btn-dark">
+              <router-link :to="`/user/${company.id}`" class="portal-btn portal-btn-dark">
                   View Details
               </router-link>
           </div>

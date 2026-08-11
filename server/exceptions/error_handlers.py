@@ -2,6 +2,7 @@ from server.exceptions import ResourceNotFoundException
 from flask import jsonify
 from marshmallow import ValidationError
 from server.exceptions import *
+from werkzeug.exceptions import NotFound
 
 def register_error_handlers(app):
 
@@ -28,6 +29,11 @@ def register_error_handlers(app):
     @app.errorhandler(AccountBlockedException)
     def handle_blocked_exception(err):
         return jsonify({"error": str(err)}), 403
+
+
+    @app.errorhandler(NotFound)
+    def handle_not_found_error(err):
+        return jsonify({"error": "Route not found"}), 404
 
 
     @app.errorhandler(ResourceNotFoundException)

@@ -13,6 +13,7 @@ class ApplicationListDTO(Schema):
     student_name = fields.String(attribute="student.name", dump_only=True)
     company_name = fields.String(attribute="drive.company.name", dump_only=True)
     drive_title = fields.String(attribute="drive.job_title", dump_only=True)
+    drive_id = fields.Int(attribute="drive.id", dump_only=True)
     status = fields.Function(lambda obj: obj.status.value, dump_only=True)
     applied_at = fields.DateTime(attribute="created_at", dump_only=True)
     
