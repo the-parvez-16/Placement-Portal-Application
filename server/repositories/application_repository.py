@@ -43,3 +43,8 @@ class ApplicationRepository(BaseRepository):
     def find_by_id(id: int) -> Application | None:
         stmt = select(Application).filter_by(id=id)
         return db.session.scalar(stmt)
+
+    @staticmethod
+    def find_by_status(status: ApplicationStatus):
+        stmt = select(Application).filter_by(status=status)
+        return db.session.scalars(stmt).all()

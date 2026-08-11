@@ -20,6 +20,15 @@ class Admin:
     password = "cb16"
     status = UserStatus.APPROVED
 
+def celery_init_app(app):
+    class FlaskTask(celery_app.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery_app.Task = FlaskTask
+
+
 def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     app = Flask(__name__)
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
@@ -27,7 +36,12 @@ def create_app(config_name=os.getenv("FLASK_ENV", "development")):
     app.config.from_object(config[config_name])
     db.init_app(app)
     jwt.init_app(app)
-    celery_app.conf.update(app.config)
+    celery_app.conf.update(
+        broker_url=app.config.get("CELERY_BROKER_URL"),
+        result_backend=app.config.get("CELERY_RESULT_BACKEND"),
+        include=['server.workers.tasks']
+    )
+    celery_init_app(app)
     cache.init_app(app)
     register_error_handlers(app)
 

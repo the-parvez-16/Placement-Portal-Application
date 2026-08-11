@@ -5,6 +5,7 @@ from server.services.drive_service import *
 from server.services.application_service import *
 from server.models import UserRole, DriveStatus
 from server.dto import *
+from server.core.extensions import cache
 
 company = Blueprint("company", __name__, url_prefix="/api/company")
 
@@ -64,6 +65,7 @@ def create_drive_api():
 
 @company.route("/drives", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def get_drives_by_company_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.COMPANY.value:
@@ -161,3 +163,43 @@ def company_update_drive_status(drive_id):
     response = update_drive_status(drive_id, user_id, new_status)
     
     return jsonify(response), 200
+
+
+@company.route("/export", methods=["POST"])
+@jwt_required()
+def trigger_company_export_api():
+    claims = get_jwt()
+    if claims.get("role") != UserRole.COMPANY.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    user_id = get_jwt_identity()
+    from server.repositories import CompanyRepository
+    company_record = CompanyRepository.get_by_user_id(user_id)
+    
+    from server.workers.tasks import export_company_applications_task
+    task = export_company_applications_task.delay(company_record.id)
+    
+    return jsonify({"message": "Export started", "task_id": task.id}), 202
+
+
+@company.route("/export-status/<task_id>", methods=["GET"])
+def get_company_export_status(task_id):
+    from server.core.extensions import celery_app
+    task_result = celery_app.AsyncResult(task_id)
+    
+    if task_result.state == 'SUCCESS':
+        return jsonify({"status": "SUCCESS", "download_url": task_result.result}), 200
+    elif task_result.state == 'FAILURE':
+        return jsonify({"status": "FAILURE"}), 500
+    else:
+        return jsonify({"status": "PENDING"}), 202
+
+
+@company.route("/download/<task_id>", methods=["GET"])
+def download_company_export_file(task_id):
+    import os
+    from flask import current_app, send_from_directory
+    
+    export_dir = os.path.join(current_app.root_path, 'static', 'exports')
+    return send_from_directory(export_dir, f"{task_id}.csv", as_attachment=True)
+

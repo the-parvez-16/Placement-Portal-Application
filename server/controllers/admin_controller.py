@@ -5,11 +5,13 @@ from server.services.application_service import *
 from server.services.drive_service import *
 from server.models import UserRole, UserStatus, DriveStatus
 from server.dto import *
+from server.core.extensions import cache
 
 admin = Blueprint("admin", __name__, url_prefix="/api/admin")
 
 @admin.route("/dashboard/stats", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_dashboard_stats():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -22,6 +24,7 @@ def admin_dashboard_stats():
 
 @admin.route("/dashboard/pending", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_dashboard_pending():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -36,6 +39,7 @@ def admin_dashboard_pending():
 
 @admin.route("/dashboard/recent", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_dashboard_recent_applications():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -86,6 +90,7 @@ def update_drive_status_api(id):
 
 @admin.route("/companies", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_get_companies():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -101,6 +106,7 @@ def admin_get_companies():
 
 @admin.route("/students", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_get_students():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -116,6 +122,7 @@ def admin_get_students():
 
 @admin.route("/drives", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_get_drives():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -131,6 +138,7 @@ def admin_get_drives():
 
 @admin.route("/applications", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def admin_get_applications():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -167,13 +175,3 @@ def admin_get_single_drive(drive_id):
     drive = get_drive_by_id(drive_id)
     return jsonify(DriveDTO().dump(drive)), 200
 
-
-
-
-from server.workers.tasks import export_csv_task
-
-@admin.route("/export-csv", methods=["POST"])
-@jwt_required()
-def export_csv_api():
-    task = export_csv_task.delay()
-    return jsonify({"message": "CSV Export started in the background!", "task_id": task.id}), 200

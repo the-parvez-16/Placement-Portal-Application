@@ -1,6 +1,5 @@
-from server.repositories import DriveRepository
 from server.services.application_service import apply_for_drive
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from server.services.student_service import *
 from server.services.drive_service import *
@@ -9,6 +8,8 @@ from server.models import UserRole
 from server.dto import *
 import os
 from werkzeug.utils import secure_filename
+from server.core.extensions import cache
+
 
 student = Blueprint("student", __name__, url_prefix="/api/student")
 
@@ -67,6 +68,7 @@ def update_student_profile_api():
 
 @student.route("/drives", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def get_approved_drives_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
@@ -99,6 +101,7 @@ def apply_drive_api(drive_id):
 
 @student.route("/applications", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def get_my_applications_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
@@ -139,6 +142,7 @@ def check_application_api(drive_id):
 
 @student.route("/companies", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=60)
 def get_student_companies_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
@@ -150,3 +154,40 @@ def get_student_companies_api():
     approved_companies = [c for c in response["companies"] if c["status"] == "approved"]
     
     return jsonify(approved_companies), 200
+
+
+@student.route("/export", methods=["POST"])
+@jwt_required()
+def trigger_export_api():
+    claims = get_jwt()
+    if claims.get("role") != UserRole.STUDENT.value:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    user_id = get_jwt_identity()
+    from server.repositories import StudentRepository
+    student_record = StudentRepository.get_by_user_id(user_id)
+    
+    from server.workers.tasks import export_student_applications_task
+    # .delay() is Celery method that sends it to the background instantly!
+    task = export_student_applications_task.delay(student_record.id)
+    
+    return jsonify({"message": "Export started", "task_id": task.id}), 202
+
+@student.route("/export-status/<task_id>", methods=["GET"])
+def get_export_status(task_id):
+    from server.core.extensions import celery_app
+    task_result = celery_app.AsyncResult(task_id)
+    
+    if task_result.state == 'SUCCESS':
+        return jsonify({"status": "SUCCESS", "download_url": task_result.result}), 200
+    elif task_result.state == 'FAILURE':
+        return jsonify({"status": "FAILURE"}), 500
+    else:
+        return jsonify({"status": "PENDING"}), 202
+
+
+@student.route("/download/<task_id>", methods=["GET"])
+def download_export_file(task_id):
+    export_dir = os.path.join(current_app.root_path, 'static', 'exports')
+    return send_from_directory(export_dir, f"{task_id}.csv", as_attachment=True)
+

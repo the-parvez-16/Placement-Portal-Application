@@ -1,45 +1,27 @@
 from server.core import celery_app
-from server.repositories import ApplicationRepository
-import io
-import csv
+from server.services.export_service import *
+from server.services.notification_service import process_daily_reminders, process_monthly_reports
 
 @celery_app.task
 def send_daily_reminders():
-    print("reminders sent...")
+    process_daily_reminders()
+    return "Daily reminders dispatched."
 
 @celery_app.task
 def generate_monthly_report():
-    print("monthly report generated...")
+    process_monthly_reports()
+    return "Monthly reports dispatched."
 
-@celery_app.task
-def export_applications_csv(student_id):
-    applications = ApplicationRepository.find_by_student_id(student_id)
 
-    data = io.StringIO()
-    writer = csv.writer(data)
+@celery_app.task(bind=True)
+def export_student_applications_task(self, student_id: int):
+    # self.request.id is Celery's unique background Task ID
+    download_url = generate_csv_for_student(student_id, self.request.id)
+    return download_url
 
-    writer.writerow(['Application ID', 'Student ID', 'Drive ID', 'Status', 'Applied At', 'Updated At'])
 
-    for app in applications:
-        writer.writerow([
-            app.id,
-            app.student_id,
-            app.drive_id,
-            app.status.name,
-            app.created_at,
-            app.updated_at
-        ])
-
-    data.seek(0)
-    return data
-
-@celery_app.task(name='export_csv_task')
-def export_csv_task():
-    file_path = os.path.join(os.getcwd(), 'exported_drives.csv')
-    with open(file_path, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['ID', 'Job Title', 'Company'])
-        writer.writerow(['1', 'Software Engineer', 'Google'])
-    return 'CSV Export Completed!'
-
+@celery_app.task(bind=True)
+def export_company_applications_task(self, company_id: int):
+    download_url = generate_csv_for_company(company_id, self.request.id)
+    return download_url
 

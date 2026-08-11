@@ -53,6 +53,40 @@ const handleStatusUpdate = async (driveId, newStatus) => {
     }
 };
 
+
+const isExporting = ref(false);
+
+const handleExport = async () => {
+    try {
+        isExporting.value = true;
+        const response = await api.post("/company/export");
+        const taskId = response.data.task_id;
+        
+        alertState.value = { type: "info", message: "Export started! Generating CSV..." };
+
+        const interval = setInterval(async () => {
+            const statusRes = await api.get(`/company/export-status/${taskId}`);
+            
+            if (statusRes.data.status === 'SUCCESS') {
+                clearInterval(interval);
+                isExporting.value = false;
+                alertState.value = { type: "success", message: "Export complete!" };
+                
+                window.location.href = statusRes.data.download_url;
+            } else if (statusRes.data.status === 'FAILURE') {
+                clearInterval(interval);
+                isExporting.value = false;
+                alertState.value = { type: "danger", message: "Export failed." };
+            }
+        }, 2000); 
+
+    } catch(err) {
+        console.log(err)
+        isExporting.value = false;
+        alertState.value = { type: "danger", message: "Failed to start export" };
+    }
+};
+
 </script>
 
 <template>
@@ -61,17 +95,25 @@ const handleStatusUpdate = async (driveId, newStatus) => {
     <StatusBanner v-if="companyStatus !== 'approved'" :status="companyStatus" />
 
     <div v-else class="row g-4">
-        
         <div class="col-12 col-md-6">
             <UpcomingDrives :drives="upcomingDrives" @updateStatus="handleStatusUpdate" />
             <ClosedDrives :drives="closedDrives" @updateStatus="handleStatusUpdate" />
             <RejectedDrives :drives="rejectedDrives" @updateStatus="handleStatusUpdate" />
         </div>
-
         <div class="col-12 col-md-6">
+            <button @click="handleExport" class="portal-btn portal-btn-primary w-100 mb-4 py-2 d-flex justify-content-center align-items-center gap-2" :disabled="isExporting">
+                <template v-if="isExporting">
+                    <VsxIcon iconName="Timer" :size="20" type="linear" />
+                    <span> Generating CSV Please Wait...</span>
+                </template>
+                <template v-else>
+                    <VsxIcon iconName="DocumentDownload" :size="20" type="linear" />
+                    <span> Export All Applications (CSV)</span>
+                </template>
+            </button>
+            
             <DriveApplications :drives="upcomingDrives" />
         </div>
-
     </div>
 
     <CreateDriveModal v-if="companyStatus === 'approved'" />

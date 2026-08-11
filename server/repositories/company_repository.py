@@ -8,3 +8,8 @@ class CompanyRepository(BaseRepository):
     def get_by_user_id(user_id: int) -> Company | None:
         stmt = select(Company).filter_by(user_id=user_id)
         return db.session.scalar(stmt)
+
+    @staticmethod
+    def get_all_companies():
+        stmt = select(Company)
+        return db.session.scalars(stmt).all()
