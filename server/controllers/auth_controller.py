@@ -22,7 +22,7 @@ def login():
 
     response = login_user_service(validated_data)
 
-    return jsonify(response), 201
+    return jsonify(response), 200
 
 @auth.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
@@ -31,7 +31,7 @@ def refresh():
 
     response = refresh_user_service(user_id)
 
-    return jsonify(response), 201
+    return jsonify(response), 200
     
 @auth.route("/users/<int:id>", methods=["GET"])
 @jwt_required()
