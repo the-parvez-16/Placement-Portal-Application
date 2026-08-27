@@ -68,7 +68,7 @@ def create_drive_api():
 
 @company.route("/drives", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def get_drives_by_company_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.COMPANY.value:

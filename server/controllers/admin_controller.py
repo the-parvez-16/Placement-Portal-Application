@@ -12,7 +12,7 @@ admin = Blueprint("admin", __name__, url_prefix="/api/admin")
 
 @admin.route("/dashboard/stats", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_dashboard_stats():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -25,7 +25,7 @@ def admin_dashboard_stats():
 
 @admin.route("/dashboard/pending", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_dashboard_pending():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -40,7 +40,7 @@ def admin_dashboard_pending():
 
 @admin.route("/dashboard/recent", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_dashboard_recent_applications():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -107,7 +107,7 @@ def update_drive_status_api(id):
 
 @admin.route("/companies", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_get_companies():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -123,7 +123,7 @@ def admin_get_companies():
 
 @admin.route("/students", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_get_students():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -139,7 +139,7 @@ def admin_get_students():
 
 @admin.route("/drives", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_get_drives():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:
@@ -155,7 +155,7 @@ def admin_get_drives():
 
 @admin.route("/applications", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def admin_get_applications():
     claims = get_jwt()
     if claims.get("role") != UserRole.SUDO.value and claims.get("role") != UserRole.ADMIN.value:

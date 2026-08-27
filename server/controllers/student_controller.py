@@ -69,7 +69,7 @@ def update_student_profile_api():
 
 @student.route("/drives", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def get_approved_drives_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
@@ -104,7 +104,7 @@ def apply_drive_api(drive_id):
 
 @student.route("/applications", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def get_my_applications_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
@@ -145,7 +145,7 @@ def check_application_api(drive_id):
 
 @student.route("/companies", methods=["GET"])
 @jwt_required()
-@cache.cached(timeout=60)
+@cache.cached(timeout=60, query_string=True)
 def get_student_companies_api():
     claims = get_jwt()
     if claims.get("role") != UserRole.STUDENT.value:
