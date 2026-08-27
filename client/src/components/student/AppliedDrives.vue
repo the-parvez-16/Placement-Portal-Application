@@ -22,18 +22,23 @@ const handleExport = async () => {
         alertState.value = { type: "info", message: "Export started! Generating CSV..." };
 
         const interval = setInterval(async () => {
-            const statusRes = await api.get(`/student/export-status/${taskId}`);
-            
-            if (statusRes.data.status === 'SUCCESS') {
-                clearInterval(interval);
-                isExporting.value = false;
-                alertState.value = { type: "success", message: "Export complete!" };
+            try {
+                const statusRes = await api.get(`/student/export-status/${taskId}`);
                 
-                window.location.href = statusRes.data.download_url;
-            } else if (statusRes.data.status === 'FAILURE') {
+                if (statusRes.data.status === 'SUCCESS') {
+                    clearInterval(interval);
+                    isExporting.value = false;
+                    alertState.value = { type: "success", message: "Export complete!" };
+                    window.location.href = statusRes.data.download_url;
+                } else if (statusRes.data.status === 'FAILURE') {
+                    clearInterval(interval);
+                    isExporting.value = false;
+                    alertState.value = { type: "danger", message: "Export failed internally." };
+                }
+            } catch (innerErr) {
                 clearInterval(interval);
                 isExporting.value = false;
-                alertState.value = { type: "danger", message: "Export failed." };
+                alertState.value = { type: "danger", message: "Server connection lost or failed!" };
             }
         }, 2000); 
 
