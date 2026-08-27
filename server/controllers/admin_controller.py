@@ -6,6 +6,7 @@ from server.services.drive_service import *
 from server.models import UserRole, UserStatus, DriveStatus
 from server.dto import *
 from server.core.extensions import cache
+from server.core.utils import invalidate_cache
 
 admin = Blueprint("admin", __name__, url_prefix="/api/admin")
 
@@ -66,6 +67,14 @@ def update_user_status_api(id):
     
     response = admin_update_user_status(id, new_status)
 
+    # Clear caches
+    invalidate_cache("/api/admin/dashboard/stats")
+    invalidate_cache("/api/admin/dashboard/pending")
+    invalidate_cache("/api/admin/dashboard/recent")
+    invalidate_cache("/api/admin/companies")
+    invalidate_cache("/api/admin/students")
+    invalidate_cache("/api/admin/drives")
+
     return jsonify(response), 200
 
 
@@ -84,6 +93,14 @@ def update_drive_status_api(id):
         return jsonify({"error": "Invalid status value!"}), 400
     
     response = admin_update_drive_status(id, new_status)
+
+    # Clear caches
+    invalidate_cache("/api/admin/dashboard/stats")
+    invalidate_cache("/api/admin/dashboard/pending")
+    invalidate_cache("/api/admin/dashboard/recent")
+    invalidate_cache("/api/admin/companies")
+    invalidate_cache("/api/admin/students")
+    invalidate_cache("/api/admin/drives")
 
     return jsonify(response), 200
 

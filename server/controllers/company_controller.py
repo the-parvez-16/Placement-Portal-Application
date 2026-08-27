@@ -6,6 +6,7 @@ from server.services.application_service import *
 from server.models import UserRole, DriveStatus
 from server.dto import *
 from server.core.extensions import cache
+from server.core.utils import invalidate_cache
 
 company = Blueprint("company", __name__, url_prefix="/api/company")
 
@@ -56,6 +57,8 @@ def create_drive_api():
     new_drive = create_placement_drive(user_id, data)
     
     response_data = CreateDriveDTO().dump(new_drive)
+
+    invalidate_cache("/api/company/drives")
     
     return jsonify({
         "message": "Drive created successfully!", 
@@ -141,6 +144,11 @@ def update_drive_api(drive_id):
     user_id = get_jwt_identity()
     
     updated_drive = update_placement_drive(drive_id, user_id, data)
+
+    invalidate_cache("/api/company/drives")
+    invalidate_cache("/api/admin/drives")
+    invalidate_cache("/api/student/drives")
+    
     return jsonify({
         "message": "Drive updated successfully!",
         "drive": DriveDTO().dump(updated_drive)
@@ -161,6 +169,10 @@ def company_update_drive_status(drive_id):
         raise ValueError("Invalid status update")
 
     response = update_drive_status(drive_id, user_id, new_status)
+    
+    invalidate_cache("/api/company/drives")
+    invalidate_cache("/api/admin/drives")
+    invalidate_cache("/api/student/drives")
     
     return jsonify(response), 200
 

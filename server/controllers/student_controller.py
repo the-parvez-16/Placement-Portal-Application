@@ -9,6 +9,7 @@ from server.dto import *
 import os
 from werkzeug.utils import secure_filename
 from server.core.extensions import cache
+from server.core.utils import invalidate_cache
 
 
 student = Blueprint("student", __name__, url_prefix="/api/student")
@@ -92,6 +93,8 @@ def apply_drive_api(drive_id):
     user_id = get_jwt_identity()
     application = apply_for_drive(user_id, drive_id)
     response_data = ApplicationDTO().dump(application)
+
+    invalidate_cache("/api/student/applications")
     
     return jsonify({
         "message": "Applied successfully!",
